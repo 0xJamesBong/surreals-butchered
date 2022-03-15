@@ -7,14 +7,15 @@ import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
 
-contract Number is ERC721Enumerable, ReentrancyGuard, Ownable {
+contract Number is ERC721Enumerable {
+    // ReentrancyGuard, Ownable
     using Counters for Counters.Counter;
 
     Counters.Counter private _tokenIdCounter;
 
     constructor() ERC721("Number", "Num") {}
 
-    uint256 public createTime;
+    
     
     struct metadata{
         uint256 number;
@@ -26,25 +27,26 @@ contract Number is ERC721Enumerable, ReentrancyGuard, Ownable {
     mapping(uint256 => uint256) public tokenId_to_minttime;
 
     
-    function getFirstBool(uint256 tokenId) public view returns (bool) {
-        bool whetherFirstOrNot = tokenId_to_firstOrNot[tokenId];
-        return whetherFirstOrNot;
-    }
+    // function getFirstBool(uint256 tokenId) public view returns (bool) {
+    //     bool whetherFirstOrNot = tokenId_to_firstOrNot[tokenId];
+    //     return whetherFirstOrNot;
+    // }
 
-    function getNumber(uint256 tokenId) public view returns (uint256) {
-        uint256 number = tokenId_to_number[tokenId];
-        return number;
-    }
+    // function getNumber(uint256 tokenId) public view returns (uint256) {
+        // uint256 number = tokenId_to_number[tokenId];
+        // return number;
+    // }
 
-    function getMinttime(uint256 tokenId) public view returns (uint256) {
-        uint256 minttime = tokenId_to_minttime[tokenId];
-        return minttime;
-    }
+    // function getMinttime(uint256 tokenId) public view returns (uint256) {
+    //     uint256 minttime = tokenId_to_minttime[tokenId];
+    //     return minttime;
+    // }
 
-    function safeMint(address to, uint256 number) public returns (uint256) {
+    function safeMint(address to, uint256 num) public returns (uint256) {
         uint256 tokenId = _tokenIdCounter.current();
         _tokenIdCounter.increment();
-        tokenId_to_number[tokenId] = number;
+        tokenId_to_number[tokenId] = num;
+        tokenId_to_minttime[tokenId] = Time();
         _safeMint(to, tokenId);
         return tokenId;
     }
@@ -54,9 +56,20 @@ contract Number is ERC721Enumerable, ReentrancyGuard, Ownable {
         return tokenId;
     }
 
-    // function Time() public {
-    //     createTime = block.timestamp;
-    // }
+    function getMinttimeFromTokenId(uint256 tokenId) public view returns (uint256) {
+        uint256 minttime = tokenId_to_minttime[tokenId];
+        return minttime;
+    }
+     
+    function getNumFromTokenId(uint256 tokenId) public view returns (uint256) {
+        uint256 num = tokenId_to_number[tokenId];
+        return num;
+    }
+
+    function Time() public view returns (uint256) {
+        uint256 createTime = block.timestamp;
+        return createTime;
+    }
 
     // function safeMint(address to, uint256 number) public {
     //     uint256 tokenId = _tokenIdCounter.current();
