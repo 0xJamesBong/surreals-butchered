@@ -6,6 +6,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
+// import "../lib/ds-test/src/console.sol";
 
 contract Number is ERC721Enumerable {
     // ReentrancyGuard, Ownable
@@ -14,42 +15,49 @@ contract Number is ERC721Enumerable {
     Counters.Counter private _tokenIdCounter;
 
     constructor() ERC721("Number", "Num") {}
+    
+    // order describes how many NFTs of the same number has been minted
+    //  a virgin number has order of 0 
+    // first mints of a number has order 0
+    // the order updates every time a number is minted
+    struct numN {
+        uint256 number;
+        uint256 order;
+    }
 
-    
-    
-    struct metadata{
+    // the Metadata Struct stores the metadata of each NFT 
+    // each tokenId has its own metadata Struct
+
+    struct Metadata {
         uint256 number;
         uint256 mintTime;
+        uint256 order;
     }
-    
-    mapping(uint256 => bool) public tokenId_to_firstOrNot;
-    mapping(uint256 => uint256) public tokenId_to_number;
-    mapping(uint256 => uint256) public tokenId_to_minttime;
 
-    
-    // function getFirstBool(uint256 tokenId) public view returns (bool) {
-    //     bool whetherFirstOrNot = tokenId_to_firstOrNot[tokenId];
-    //     return whetherFirstOrNot;
-    // }
+    mapping(uint256 => numN) num_to_numN;
+    mapping(uint256 => Metadata) tokenId_to_metadata;
 
-    // function getNumber(uint256 tokenId) public view returns (uint256) {
-        // uint256 number = tokenId_to_number[tokenId];
-        // return number;
-    // }
-
-    // function getMinttime(uint256 tokenId) public view returns (uint256) {
-    //     uint256 minttime = tokenId_to_minttime[tokenId];
-    //     return minttime;
-    // }
-
-    function safeMint(address to, uint256 num) public returns (uint256) {
+    function anotherMint(address to, uint256 num) public returns (uint256) {
+        
+        // checks if num is new, if new, increases its order to 1 (first!)
+        // if not new, does nothing and goes straight next
+        if ( num_to_numN[num].order == 0 ) {
+            num_to_numN[num].number = num;
+            num_to_numN[num].order = 1;
+        }
+        
+        uint256 order = num_to_numN[num].order;
         uint256 tokenId = _tokenIdCounter.current();
+        uint256 mintTime = Time();
+        tokenId_to_metadata[tokenId] = Metadata(num, mintTime, order);
+        num_to_numN[num].order+=1; 
         _tokenIdCounter.increment();
-        tokenId_to_number[tokenId] = num;
-        tokenId_to_minttime[tokenId] = Time();
+        
         _safeMint(to, tokenId);
         return tokenId;
     }
+
+
 
     function getCurrentTokenId() public view returns (uint256) {
         uint256 tokenId = _tokenIdCounter.current();
@@ -57,12 +65,13 @@ contract Number is ERC721Enumerable {
     }
 
     function getMinttimeFromTokenId(uint256 tokenId) public view returns (uint256) {
-        uint256 minttime = tokenId_to_minttime[tokenId];
+        uint256 minttime = tokenId_to_metadata[tokenId].mintTime;
         return minttime;
     }
-     
+ 
     function getNumFromTokenId(uint256 tokenId) public view returns (uint256) {
-        uint256 num = tokenId_to_number[tokenId];
+        // uint256 num = tokenId_to_number[tokenId];
+        uint256 num = tokenId_to_metadata[tokenId].number;
         return num;
     }
 
@@ -71,30 +80,9 @@ contract Number is ERC721Enumerable {
         return createTime;
     }
 
-    // function safeMint(address to, uint256 number) public {
-    //     uint256 tokenId = _tokenIdCounter.current();
-    //     _tokenIdCounter.increment();
-    //     _safeMint(to, tokenId);
-    //     console.log(createTime);
-    //     Time();
-    //     console.log(createTime);
-    //     writeMetadata(number, createTime, tokenId);
-    // }
-
-    // function writeMetadata(uint256 _time, uint256 _number, uint256 tokenId) private {
-    //     tokenId_to_metadata[tokenId] = metadata({
-    //         time: _time,
-    //         number: _number
-    //     });
-        
-    // }
-
-    // function readMetadata(uint256 tokenId) public view returns (uint256, uint256) {
-    //     // metadata = tokenId_to_metadata[tokenId];
-    //     uint256 time = tokenId_to_metadata[tokenId].time;
-    //     uint256 number = tokenId_to_metadata[tokenId].number;
-    //     return (time, number);
-    // }
-
+    function getOrderFromTokenId(uint256 tokenId) public view returns (uint256) {
+        uint256 order = tokenId_to_metadata[tokenId].order; 
+        return order;
+    }
     
 }
