@@ -57,8 +57,6 @@ contract Number is ERC721Enumerable {
         return tokenId;
     }
 
-
-
     function getCurrentTokenId() public view returns (uint256) {
         uint256 tokenId = _tokenIdCounter.current();
         return tokenId;
