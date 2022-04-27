@@ -269,14 +269,24 @@ contract VNO is ERC721, Ownable {
             return string(abi.encodePacked(abi.encodePacked(substring1, successorString(nestedSet2)), substring2));    
         }
     }
+
+    // a - a = 0, S(a) - b = S(a-b)
+    // a - a = 0, a - b = S(P(a)) - b = S(P(a)-b)
     // subtraction for any x, x-x =0, s(x)-n = s(x-n)
-    // function subtractNestedSets (string memory nestedSet1, string memory nestedSet2) public returns (string memory addedNestedSet) {
-        // (bool isNestedString1,,) = isNestedString(nestedSet1);
-        // (bool isNestedString2,,) = isNestedString(nestedSet2);
-        // require(isNestedString1 == true, "nestedSet1 is not legal nested string");
-        // require(isNestedString2 == true, "nestedSet2 is not legal nested string");
-        // require(isSubstring(nestedSet2, nestedSet1) == true || nestedSet1 ==  )        
-    // }
+    function subtractNestedSets (string memory minuend, string memory subtrahend) public returns (string memory addedNestedSet) {
+        // a - b 
+        // a = minuend, b = subtrahend
+        (bool isNestedString1,,) = isNestedString(minuend);
+        (bool isNestedString2,,) = isNestedString(subtrahend);
+        require(isNestedString1 == true, "nestedSet1 is not legal nested string");
+        require(isNestedString2 == true, "nestedSet2 is not legal nested string");
+        require(isSubstring(subtrahend, minuend) == true || stringsEq(minuend, subtrahend), "the subtrahend is bigger than the minuend. You need to extend this number system to the integers to do that.");
+        if (stringsEq(minuend, subtrahend)) {
+            return emptyset; 
+        } else {
+            return successorString(subtractNestedSets(predecessorString(minuend), subtrahend));
+        }
+    }
 // 
     function multiplyNestedSets (string memory nestedSet1, string memory nestedSet2) public returns (string memory addedNestedSet) {
         
@@ -289,6 +299,7 @@ contract VNO is ERC721, Ownable {
         // uint256 nestedSet2Length = utfStringLength(nestedSet2);
 
         // a * 0 = 0, a * S(b) = a * b + a        
+        // a * 0 = 0, a * b = a * P(b) + a = a * (b - 1) + a = a * b    
         // the shorter string is put inside the sandwich; because that's the object that will be iterated on
 
         // if (comepareNestedSet1 == compareNestedSet2 || isSubstring(nestedSet1, nestedSet2) == true) {

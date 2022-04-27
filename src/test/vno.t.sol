@@ -174,6 +174,30 @@ contract VNOTest is DSTest {
 
     }
 
+    function testSubtractNestedSets () public {
+        
+        
+        string memory imi       = vno.subtractNestedSets(i, i);       // anything multiplied by 1 should be itself.
+        string memory iimi      = vno.subtractNestedSets(ii, i);       // anything multiplied by 1 should be itself.
+        string memory iiime     = vno.subtractNestedSets(iii, e);       // multiplication by 1 should return self, commutativity test
+        string memory vmiii     = vno.subtractNestedSets(v, iii);       // multiplication by 1 should return self, commutativity test
+        
+
+        console.log("imi    should be", e   ,   imi  );
+        console.log("iimi   should be", i   ,   iimi );
+        console.log("iiime  should be", iii ,   iiime);
+        console.log("vmiii  should be", ii  ,   vmiii);
+        
+        
+        
+
+        assertTrue(keccak256(abi.encodePacked(e    ))   == keccak256(abi.encodePacked(imi  )));
+        assertTrue(keccak256(abi.encodePacked(i  ))     == keccak256(abi.encodePacked(iimi )));
+        assertTrue(keccak256(abi.encodePacked(iii ))    == keccak256(abi.encodePacked(iiime)));
+        assertTrue(keccak256(abi.encodePacked(ii  ))    == keccak256(abi.encodePacked(vmiii)));
+    }
+
+
 // //    function testAM() public {
 // //         uint256 num = 7;
 // //         uint256 tokenId_before_mint = vno.getCurrentTokenId();
