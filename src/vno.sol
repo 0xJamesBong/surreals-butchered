@@ -148,6 +148,16 @@ contract VNO is ERC721, Ownable {
         return (legal, numL, numR);
     }
     
+    function stringsEq(string memory nestedSet1, string memory nestedSet2) public returns (bool) {
+        bytes32 compareNestedSet1 = keccak256(abi.encodePacked(nestedSet1));
+        bytes32 compareNestedSet2 = keccak256(abi.encodePacked(nestedSet2));
+        if (compareNestedSet1 == compareNestedSet2) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     function isSubstring(string memory nestedSet1, string memory nestedSet2) public returns (bool) {
         // Only determines if nestedSet 1 is a substring of nestedSet2 
         // I don't care about the other way around
@@ -192,6 +202,7 @@ contract VNO is ERC721, Ownable {
     
     string emptyset = "{}";
     string one = "{{}}";
+    string predecessorOfZero = "{}";
 
 //////////////////////////////////////////////////////////////////////////////////////////
                                     // The VNO
@@ -227,21 +238,27 @@ contract VNO is ERC721, Ownable {
         string memory substring1 = substring(nestedSet1, 0, nestedSet1Length/2-1);
         string memory substring2 = substring(nestedSet1, nestedSet1Length/2, nestedSet1Length-1);
         
-        if (compareNestedSet1 == compareEmptySet || compareNestedSet2 == compareEmptySet) {
+        if (stringsEq(nestedSet1, emptyset) || stringsEq(nestedSet2, emptyset)) {
+        // if (compareNestedSet1 == compareEmptySet || compareNestedSet2 == compareEmptySet) {
             // if either one is 0 
-            if (compareNestedSet1 != compareEmptySet) {
+            if (stringsEq(nestedSet1, emptyset) == false) {
+            // if (compareNestedSet1 != compareEmptySet) {
                 return nestedSet1;
-            } else if (compareNestedSet2 != compareEmptySet) {
+            } else if (stringsEq(nestedSet2, emptyset) == false) {
+            // } else if (compareNestedSet2 != compareEmptySet) {
                 return nestedSet2; 
             } else {
                 return emptyset;
             }                
 
-        } else if (compareNestedSet1 == compareOne || compareNestedSet2 == compareOne) {
+        } else if (stringsEq(nestedSet1, one) || stringsEq(nestedSet2, one)) {
+        // } else if (compareNestedSet1 == compareOne || compareNestedSet2 == compareOne) {
             // if either one is 1 
-            if (compareNestedSet1 != compareOne) {
+            if (stringsEq(nestedSet1, one) == false) {
+            // if (compareNestedSet1 != compareOne) {
                 return successorString(nestedSet1);
-            } else if ( compareNestedSet2 != compareOne) {
+            } else if ( stringsEq(nestedSet2, one) == false) {
+            // } else if ( compareNestedSet2 != compareOne) {
                 return successorString(nestedSet2);
             } else {
                 // both of them are 1, so the sum is just the successor of either, which is 2
@@ -252,7 +269,15 @@ contract VNO is ERC721, Ownable {
             return string(abi.encodePacked(abi.encodePacked(substring1, successorString(nestedSet2)), substring2));    
         }
     }
-
+    // subtraction for any x, x-x =0, s(x)-n = s(x-n)
+    // function subtractNestedSets (string memory nestedSet1, string memory nestedSet2) public returns (string memory addedNestedSet) {
+        // (bool isNestedString1,,) = isNestedString(nestedSet1);
+        // (bool isNestedString2,,) = isNestedString(nestedSet2);
+        // require(isNestedString1 == true, "nestedSet1 is not legal nested string");
+        // require(isNestedString2 == true, "nestedSet2 is not legal nested string");
+        // require(isSubstring(nestedSet2, nestedSet1) == true || nestedSet1 ==  )        
+    // }
+// 
     function multiplyNestedSets (string memory nestedSet1, string memory nestedSet2) public returns (string memory addedNestedSet) {
         
         // string memory emptyset = "{}";
@@ -260,8 +285,8 @@ contract VNO is ERC721, Ownable {
         bytes32 compareNestedSet2 = keccak256(abi.encodePacked(nestedSet2));
         bytes32 compareEmptySet = keccak256(abi.encodePacked(emptyset));
         bytes32 compareOne = keccak256(abi.encodePacked(one));
-        uint256 nestedSet1Length = utfStringLength(nestedSet1);
-        uint256 nestedSet2Length = utfStringLength(nestedSet2);
+        // uint256 nestedSet1Length = utfStringLength(nestedSet1);
+        // uint256 nestedSet2Length = utfStringLength(nestedSet2);
 
         // a * 0 = 0, a * S(b) = a * b + a        
         // the shorter string is put inside the sandwich; because that's the object that will be iterated on
@@ -277,16 +302,18 @@ contract VNO is ERC721, Ownable {
             // string memory substring1 = substring(nestedSet1, 0, nestedSet1Length/2-1);
             // string memory substring2 = substring(nestedSet1, nestedSet1Length/2, nestedSet1Length-1);
         // }
-    
-        if (compareNestedSet1 == compareEmptySet || compareNestedSet2 == compareEmptySet) {
+        if (stringsEq(nestedSet1, emptyset) || stringsEq(nestedSet2, emptyset)) {
+        // if (compareNestedSet1 == compareEmptySet || compareNestedSet2 == compareEmptySet) {
             return emptyset;
-        } else if (compareNestedSet1 == compareOne || compareNestedSet2 == compareOne) {
-            if (compareNestedSet1 == compareOne) {
+        } else if (stringsEq(nestedSet1, one) || stringsEq(nestedSet2, one)) {
+        // } else if (compareNestedSet1 == compareOne || compareNestedSet2 == compareOne) {
+            if (stringsEq(nestedSet1, one)) {
                 return nestedSet2;
             } else {
                 return nestedSet1;
             }
-        } else if (isSubstring(nestedSet1, nestedSet2) || compareNestedSet1 == compareNestedSet2) {
+        } else if (isSubstring(nestedSet1, nestedSet2) || stringsEq(nestedSet1, nestedSet2)) {
+        // } else if (isSubstring(nestedSet1, nestedSet2) || compareNestedSet1 == compareNestedSet2) {
             return addNestedSets(multiplyNestedSets(nestedSet2, predecessorString(nestedSet1)), nestedSet2);
         } else {
             return addNestedSets(multiplyNestedSets(nestedSet1, predecessorString(nestedSet2)), nestedSet1);
