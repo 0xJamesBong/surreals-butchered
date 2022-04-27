@@ -5,7 +5,6 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
-import "../lib/ds-test/src/console.sol";
 
 contract VNO is ERC721, Ownable {
     using Counters for Counters.Counter;
@@ -114,76 +113,6 @@ contract VNO is ERC721, Ownable {
             length++;
         }
     }
-    
-    function isNestedString (string memory where) public returns (bool, uint256 numL, uint256 numR) {
-        // https://ethereum.stackexchange.com/questions/69307/find-word-in-string-solidity
-        bytes memory whereBytes = bytes (where);
-        bool legal = true;
-        uint256 numL = 0;
-        uint256 numR = 0;        
-        for (uint i = 0; i <= whereBytes.length-1; i++) {
-            bool flag = false;
-            // recording the number of left and right brackets
-            if (whereBytes[i]=="{") {
-                numL += 1;
-            } else if (whereBytes[i]=="}") {
-                numR += 1;
-            }
-            if (whereBytes[i] != "{" && whereBytes[i] != "}")  {
-                flag = true;
-            } 
-            // checking if a } is followed by a { 
-            if (i+1 != whereBytes.length && whereBytes[i]=="}" && whereBytes[i+1]=="{") {
-                flag = true;    
-            }
-            // if any one flag is raised, break loop
-            if (flag) {
-                legal = false;
-                break;
-            }
-        }
-        if (numL != numR ) {
-            legal = false;
-        }
-        return (legal, numL, numR);
-    }
-    
-    function isSubstring(string memory nestedSet1, string memory nestedSet2) public returns (bool) {
-        // Only determines if nestedSet 1 is a substring of nestedSet2 
-        // I don't care about the other way around
-        // proper substrings only
-        // This function relies on the fact that we have already checked they're legal strings 
-        // Which enables the iff that isSubstring(nestedSet1, nestedSet2) == true iff nestedSet1 < nestedSet2 as numbers.
-        (bool isNestedString1,,) = isNestedString(nestedSet1);
-        (bool isNestedString2,,) = isNestedString(nestedSet2);
-        require(isNestedString1 == true, "nestedSet1 is not legal nested substring");
-        require(isNestedString2 == true, "nestedSet2 is not legal nested substring");
-        if (utfStringLength(nestedSet1) < utfStringLength(nestedSet2)) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    function successorString(string memory nestedSet) public returns (string memory successor) {
-        (bool isNestedString,,) = isNestedString(nestedSet);
-        require(isNestedString == true, "nestedSet is not legal nested string");
-        bytes memory predecessor = abi.encodePacked(nestedSet);
-        string memory successorString = string(abi.encodePacked("{", predecessor, "}"));
-        return successorString;
-    }
-
-    function predecessorString(string memory nestedSet) public returns (string memory predecessor) {
-        (bool isNestedString,,) = isNestedString(nestedSet);
-        require(isNestedString == true, "nestedSet is not legal nested string");
-        bytes memory thisNestedSet = abi.encodePacked(nestedSet);
-        if (keccak256(thisNestedSet) == keccak256(abi.encodePacked(emptyset))) {
-            return emptyset;
-        } else {
-            return string(abi.encodePacked(substring(nestedSet, 1, utfStringLength(nestedSet)-1)));
-        }
-    }
-    
 
     // struct Zero {
     //     string identity;
@@ -192,126 +121,6 @@ contract VNO is ERC721, Ownable {
     
     string emptyset = "{}";
     string one = "{{}}";
-
-//////////////////////////////////////////////////////////////////////////////////////////
-                                    // The VNO
-//////////////////////////////////////////////////////////////////////////////////////////
-    
-
-    // modifier isNS (string memory where) {
-    //     (bool isNestedString,,) = isNestedString(where);
-    //     require(isNestedString == true);
-    //     _;
-    // }
-
-
-
-    // addition and multiplication in vno are defined as such
-    // for any numbers a,b
-    // a + 0 = a, a + S(b) = S(a+b)
-    // a * 0 = 0, a * S(b) = a * b + a
-    // the definition is therefore recursive
-
-    function addNestedSets (string memory nestedSet1, string memory nestedSet2) public returns (string memory addedNestedSet) {
-        (bool isNestedString1,,) = isNestedString(nestedSet1);
-        (bool isNestedString2,,) = isNestedString(nestedSet2);
-        require(isNestedString1 == true, "nestedSet1 is not legal nested string");
-        require(isNestedString2 == true, "nestedSet2 is not legal nested string");
-        // string memory emptyset = "{}";
-        bytes32 compareNestedSet1 = keccak256(abi.encodePacked(nestedSet1));
-        bytes32 compareNestedSet2 = keccak256(abi.encodePacked(nestedSet2));
-        bytes32 compareEmptySet = keccak256(abi.encodePacked(emptyset));
-        bytes32 compareOne = keccak256(abi.encodePacked(one));
-        uint256 nestedSet1Length = utfStringLength(nestedSet1);
-        // uint256 nestedSet2Length = utfStringLength(nestedSet2);
-        string memory substring1 = substring(nestedSet1, 0, nestedSet1Length/2-1);
-        string memory substring2 = substring(nestedSet1, nestedSet1Length/2, nestedSet1Length-1);
-        
-        if (compareNestedSet1 == compareEmptySet || compareNestedSet2 == compareEmptySet) {
-            // if either one is 0 
-            if (compareNestedSet1 != compareEmptySet) {
-                return nestedSet1;
-            } else if (compareNestedSet2 != compareEmptySet) {
-                return nestedSet2; 
-            } else {
-                return emptyset;
-            }                
-
-        } else if (compareNestedSet1 == compareOne || compareNestedSet2 == compareOne) {
-            // if either one is 1 
-            if (compareNestedSet1 != compareOne) {
-                return successorString(nestedSet1);
-            } else if ( compareNestedSet2 != compareOne) {
-                return successorString(nestedSet2);
-            } else {
-                // both of them are 1, so the sum is just the successor of either, which is 2
-                return successorString(nestedSet1);
-            }
-        } else {
-            // concatenating the three strings together, sandwiching the successor of nestedSet2 with the two substrings obtained from nestedSet1
-            return string(abi.encodePacked(abi.encodePacked(substring1, successorString(nestedSet2)), substring2));    
-        }
-    }
-
-    function multiplyNestedSets (string memory nestedSet1, string memory nestedSet2) public returns (string memory addedNestedSet) {
-        
-        // string memory emptyset = "{}";
-        bytes32 compareNestedSet1 = keccak256(abi.encodePacked(nestedSet1));
-        bytes32 compareNestedSet2 = keccak256(abi.encodePacked(nestedSet2));
-        bytes32 compareEmptySet = keccak256(abi.encodePacked(emptyset));
-        bytes32 compareOne = keccak256(abi.encodePacked(one));
-        uint256 nestedSet1Length = utfStringLength(nestedSet1);
-        uint256 nestedSet2Length = utfStringLength(nestedSet2);
-
-        // a * 0 = 0, a * S(b) = a * b + a        
-        // the shorter string is put inside the sandwich; because that's the object that will be iterated on
-
-        // if (comepareNestedSet1 == compareNestedSet2 || isSubstring(nestedSet1, nestedSet2) == true) {
-            // nestedSet1 <= nestedSet2
-            // breaking nestedSet1 into two parts, which are then reorganised to sandwich nestedSet2
-            // string memory substring1 = substring(nestedSet2, 0, nestedSet2Length/2-1);
-            // string memory substring2 = substring(nestedSet2, nestedSet2Length/2, nestedSet2Length-1);
-        // } else {
-            // nestedSet2 < nestedSet1
-            // breaking nestedSet2 into two parts, which are then reorganised to sandwich nestedSet1
-            // string memory substring1 = substring(nestedSet1, 0, nestedSet1Length/2-1);
-            // string memory substring2 = substring(nestedSet1, nestedSet1Length/2, nestedSet1Length-1);
-        // }
-    
-        if (compareNestedSet1 == compareEmptySet || compareNestedSet2 == compareEmptySet) {
-            return emptyset;
-        } else if (compareNestedSet1 == compareOne || compareNestedSet2 == compareOne) {
-            if (compareNestedSet1 == compareOne) {
-                return nestedSet2;
-            } else {
-                return nestedSet1;
-            }
-        } else if (isSubstring(nestedSet1, nestedSet2) || compareNestedSet1 == compareNestedSet2) {
-            return addNestedSets(multiplyNestedSets(nestedSet2, predecessorString(nestedSet1)), nestedSet2);
-        } else {
-            return addNestedSets(multiplyNestedSets(nestedSet1, predecessorString(nestedSet2)), nestedSet1);
-        }
-
-    }
-// addition and multiplication in vno are defined as such
-// for any numbers a,b
-// a + 0 = a, a + S(b) = S(a+b)
-// a * 0 = 0, a * S(b) = a * b + a
-// the definition is therefore recursive
-// 
-    // function multiply(uint256 num1, uint256 num2) {}
-    // 
-    // function exponentiate(uint256 num1, uint256 num1) {}
-
-    // Return argument type struct VNO.Num storage pointer is not implicitly 
-    // convertible to expected type (type of first return variable) struct
-    //  VNO.Num memory.
-
-
-//////////////////////////////////////////////////////////////////////////////////////////
-                        // The Object of the Number
-//////////////////////////////////////////////////////////////////////////////////////////
-
 
     struct Num {
         string identity;
@@ -327,8 +136,45 @@ contract VNO is ERC721, Ownable {
         z.predecessor = emptyset;
         return z;
     }
-
     
+    function union (string memory set1, string memory set2) public returns (string memory union) {
+        // if either is the emptyset
+        if (set1 == emptyset || set2 == emptyset) {
+            if (set1 != emptyset) {
+                return set2
+            } else if ()
+        }
+        // if either is not the emptyset
+        string memory union = string(abi.encodePacked("{", predecessor, "}"));
+    }
+
+    function successorString(string memory nestedSet) public returns (string memory successor) {
+        bytes memory predecessor = abi.encodePacked(nestedSet);
+        string memory successorString = string(abi.encodePacked("{", predecessor, "}"));
+        return successorString;
+    }
+    
+    function predecessorString(string memory nestedSet) public returns (string memory successor) {
+        bytes memory thisNestedSet = abi.encodePacked(nestedSet);
+        if (keccak256(thisNestedSet) == keccak256(abi.encodePacked(emptyset))) {
+            return emptyset;
+        } else {
+            return string(abi.encodePacked(substring(nestedSet, 1, utfStringLength(nestedSet)-2)));
+        }
+    }
+
+    function makeSuccessor(Num memory _predecessor) public returns (Num memory successor) {
+        // require(numExists(emptyset) == true);
+        // require(numExists(emptyset) == false);
+        bytes memory _predecessorIdentity = abi.encodePacked(_predecessor.identity);
+        string memory successorString = string(abi.encodePacked("{", _predecessorIdentity, "}"));
+        // string memory successorString = successorString(_predecessor.identity);
+        Num storage n = nestedSet_to_Num[successorString];
+        n.identity = successorString;
+        n.predecessor = _predecessor.identity;
+        return n;
+    }
+
     function numExists(string memory nestedSet) public view returns (bool) {
         // https://ethereum.stackexchange.com/questions/11039/how-can-you-check-if-a-string-is-empty-in-solidity
         bytes memory tempNestedSet = bytes(nestedSet_to_Num[nestedSet].identity); // Uses memory
@@ -355,17 +201,86 @@ contract VNO is ERC721, Ownable {
         return numPredecessor;
     }
 
-    function makeSuccessor(Num memory _predecessor) public returns (Num memory successor) {
-        // require(numExists(emptyset) == true);
-        // require(numExists(emptyset) == false);
-        bytes memory _predecessorIdentity = abi.encodePacked(_predecessor.identity);
-        string memory successorString = string(abi.encodePacked("{", _predecessorIdentity, "}"));
-        // string memory successorString = successorString(_predecessor.identity);
-        Num storage n = nestedSet_to_Num[successorString];
-        n.identity = successorString;
-        n.predecessor = _predecessor.identity;
-        return n;
+    // addition and multiplication in vno are defined as such
+    // for any numbers a,b
+    // a + 0 = a, a + S(b) = S(a+b)
+    // a * 0 = 0, a * S(b) = a * b + a
+    // the definition is therefore recursive
+
+    function addNestedSets (string memory nestedSet1, string memory nestedSet2) public returns (string memory addedNestedSet) {
+        
+        // string memory emptyset = "{}";
+        bytes32 compareNestedSet1 = keccak256(abi.encodePacked(nestedSet1));
+        bytes32 compareNestedSet2 = keccak256(abi.encodePacked(nestedSet2));
+        bytes32 compareEmptySet = keccak256(abi.encodePacked(emptyset));
+        bytes32 compareOne = keccak256(abi.encodePacked(one));
+        uint256 nestedSet1Length = utfStringLength(nestedSet1);
+        string memory substring1 = substring(nestedSet1, 0, nestedSet1Length/2-1);
+        string memory substring2 = substring(nestedSet1, nestedSet1Length/2, nestedSet1Length-1);
+        // 
+        // substring2 = substring(nestedSet1, )
+
+        if (compareNestedSet1 == compareEmptySet || compareNestedSet2 == compareEmptySet) {
+            // if either one is 0 
+            if (compareNestedSet1 != compareEmptySet) {
+                return nestedSet1;
+            } else if (compareNestedSet2 != compareEmptySet) {
+                return nestedSet2; 
+            } else {
+                return emptyset;
+            }                
+
+        } else if (compareNestedSet1 == compareOne || compareNestedSet2 == compareOne) {
+            // if either one is 1 
+            if (compareNestedSet1 != compareOne) {
+                return successorString(nestedSet1);
+            } else if ( compareNestedSet2 != compareOne) {
+                return successorString(nestedSet2);
+            } else {
+                return successorString(nestedSet1);
+            }
+        } else {
+            // if neither is 0 or 1
+            return string(abi.encodePacked(abi.encodePacked(substring1, successorString(nestedSet2)), substring2));
+        }
+
     }
+
+    function multiplyNestedSets (string memory nestedSet1, string memory nestedSet2) public returns (string memory addedNestedSet) {
+        
+        // string memory emptyset = "{}";
+        bytes32 compareNestedSet1 = keccak256(abi.encodePacked(nestedSet1));
+        bytes32 compareNestedSet2 = keccak256(abi.encodePacked(nestedSet2));
+        bytes32 compareEmptySet = keccak256(abi.encodePacked(emptyset));
+        bytes32 compareOne = keccak256(abi.encodePacked(one));
+        uint256 nestedSet1Length = utfStringLength(nestedSet1);
+        string memory substring1 = substring(nestedSet1, 0, nestedSet1Length/2-1);
+        string memory substring2 = substring(nestedSet1, nestedSet1Length/2, nestedSet1Length-1);
+
+        // a * 0 = 0, a * S(b) = a * b + a
+        
+        if (compareNestedSet1 == compareEmptySet || compareNestedSet2 == compareEmptySet) {
+            return emptyset;
+        } else {
+            return addNestedSets(multiplyNestedSets(nestedSet1, nestedSet2), nestedSet2);
+        }
+
+    }
+// addition and multiplication in vno are defined as such
+// for any numbers a,b
+// a + 0 = a, a + S(b) = S(a+b)
+// a * 0 = 0, a * S(b) = a * b + a
+// the definition is therefore recursive
+// 
+    // function multiply(uint256 num1, uint256 num2) {}
+    // 
+    // function exponentiate(uint256 num1, uint256 num1) {}
+
+    // Return argument type struct VNO.Num storage pointer is not implicitly 
+    // convertible to expected type (type of first return variable) struct
+    //  VNO.Num memory.
+
+    
     
     //  struct Person
     // {
