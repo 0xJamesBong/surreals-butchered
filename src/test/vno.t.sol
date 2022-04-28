@@ -29,47 +29,47 @@ contract VNOTest is DSTest {
     string i = "{{}}";
     string ii = "{{{}}}";
     string iii = "{{{{}}}}";
-    string v  = "{{{{{{{}}}}}}}";
-    string vi  = "{{{{{{{{}}}}}}}}";    
+    string v  = "{{{{{{}}}}}}";
+    string vi  = "{{{{{{{}}}}}}}";
     
     
-    function testMakeZero () public {
-        string memory emptyset = "{}";
-        assertTrue(vno.numExists(emptyset)==false);
+//     function testMakeZero () public {
+//         string memory emptyset = "{}";
+//         assertTrue(vno.numExists(emptyset)==false);
         
-        // assertTrue(vno.nestedSet_to_Num[emptyset]==0);
-        // assertTrue(vno.getNumIdentity(emptyset)==0);
+//         // assertTrue(vno.nestedSet_to_Num[emptyset]==0);
+//         // assertTrue(vno.getNumIdentity(emptyset)==0);
         
-        // assertTrue(vno.getNumIdentity(emptyset) == 0);
-        vno.makeZero();
-        assertTrue(vno.numExists(emptyset)==true);
-        assertTrue(keccak256(abi.encodePacked(vno.getNumIdentity(emptyset)))==keccak256(abi.encodePacked(emptyset)));
-        assertTrue(keccak256(abi.encodePacked(vno.getNumPredecessor(emptyset)))==keccak256(abi.encodePacked(emptyset)));
-    }
+//         // assertTrue(vno.getNumIdentity(emptyset) == 0);
+//         vno.makeZero();
+//         assertTrue(vno.numExists(emptyset)==true);
+//         assertTrue(keccak256(abi.encodePacked(vno.getNumIdentity(emptyset)))==keccak256(abi.encodePacked(emptyset)));
+//         assertTrue(keccak256(abi.encodePacked(vno.getNumPredecessor(emptyset)))==keccak256(abi.encodePacked(emptyset)));
+//     }
     
-    function testMakeOne () public {
-        string memory emptyset = "{}";
-        string memory one = "{{}}";
-        console.log("Number zero exists:", vno.numExists(emptyset));
-        assertTrue(vno.numExists(emptyset)==false);
-        vno.makeZero();
-        console.log("Number zero exists:", vno.numExists(emptyset));
-        assertTrue(vno.numExists(emptyset)==true);
+//     function testMakeOne () public {
+//         string memory emptyset = "{}";
+//         string memory one = "{{}}";
+//         console.log("Number zero exists:", vno.numExists(emptyset));
+//         assertTrue(vno.numExists(emptyset)==false);
+//         vno.makeZero();
+//         console.log("Number zero exists:", vno.numExists(emptyset));
+//         assertTrue(vno.numExists(emptyset)==true);
         
-        console.log("Number one exists:", vno.numExists(one));
+//         console.log("Number one exists:", vno.numExists(one));
         
-        vno.makeSuccessor(vno.getNum(emptyset));
+//         vno.makeSuccessor(vno.getNum(emptyset));
         
-        // assertTrue(vno.numExists(vno.successorString(emptyset))==true);
-        assertTrue(vno.numExists(one)==true);
-        console.log("Number one exists:", vno.numExists(one));
-        assertTrue(keccak256(abi.encodePacked(vno.successorString(emptyset)))==keccak256(abi.encodePacked(one)));
+//         // assertTrue(vno.numExists(vno.successorString(emptyset))==true);
+//         assertTrue(vno.numExists(one)==true);
+//         console.log("Number one exists:", vno.numExists(one));
+//         assertTrue(keccak256(abi.encodePacked(vno.successorString(emptyset)))==keccak256(abi.encodePacked(one)));
 
-        console.log("The identity of the successor of zero is",vno.getNumIdentity(one));
-        assertTrue(keccak256(abi.encodePacked(vno.getNumIdentity(one)))==keccak256(abi.encodePacked(one)));
-        console.log("The identity of the predecessor of the successor of zero is",vno.getNumIdentity(one));
-        assertTrue(keccak256(abi.encodePacked(vno.getNumPredecessor(one)))==keccak256(abi.encodePacked(emptyset)));
-    }
+//         console.log("The identity of the successor of zero is",vno.getNumIdentity(one));
+//         assertTrue(keccak256(abi.encodePacked(vno.getNumIdentity(one)))==keccak256(abi.encodePacked(one)));
+//         console.log("The identity of the predecessor of the successor of zero is",vno.getNumIdentity(one));
+//         assertTrue(keccak256(abi.encodePacked(vno.getNumPredecessor(one)))==keccak256(abi.encodePacked(emptyset)));
+//     }
 
     function testutfStringLength() public {
         string memory two   = "{{{}}}";
@@ -110,13 +110,13 @@ contract VNOTest is DSTest {
         console.log(isMisordered,               numLmisordered,             numRmisordered     );
         console.log(isnotequalbrackets,         numLnotequalbrackets,       numRnotequalbrackets);
         console.log(isAsymmetricNestedString,   numLAsymmetricNestedString, numRAsymmetricNestedString );
-// 
+
         // assertTrue(isFive                     == true  );
         assertTrue(isOtherGlyphs            == false );
         assertTrue(isMisordered             == false );
         assertTrue(isnotequalbrackets       == false );
         assertTrue(isAsymmetricNestedString == false );
-// 
+
     }
 
     function testAddNestedSets () public {
@@ -124,7 +124,7 @@ contract VNOTest is DSTest {
         string memory one = "{{}}";
         string memory two = "{{{}}}";
         string memory three = "{{{{}}}}";
-        string memory five  = "{{{{{{{}}}}}}}";
+        string memory five  = "{{{{{{}}}}}}";
         // 2 = {{{}}}
         // 3 = {{{{}}}}
         // 5 = {{{{{{{}}}}}}}
@@ -175,27 +175,45 @@ contract VNOTest is DSTest {
     }
 
     function testSubtractNestedSets () public {
-        
-        
+        string memory v = vno.addNestedSets(iii, ii);
         string memory imi       = vno.subtractNestedSets(i, i);       // anything multiplied by 1 should be itself.
         string memory iimi      = vno.subtractNestedSets(ii, i);       // anything multiplied by 1 should be itself.
         string memory iiime     = vno.subtractNestedSets(iii, e);       // multiplication by 1 should return self, commutativity test
         string memory vmiii     = vno.subtractNestedSets(v, iii);       // multiplication by 1 should return self, commutativity test
-        
 
+        console.log("v should be", "{{{{{{}}}}}}", v);
         console.log("imi    should be", e   ,   imi  );
         console.log("iimi   should be", i   ,   iimi );
         console.log("iiime  should be", iii ,   iiime);
-        console.log("vmiii  should be", ii  ,   vmiii);
+        console.log("vmiii  should be", ii  ,   vmiii);        
         
-        
-        
-
+        assertTrue(keccak256(abi.encodePacked("{{{{{{}}}}}}"   ))   == keccak256(abi.encodePacked(v)));
         assertTrue(keccak256(abi.encodePacked(e    ))   == keccak256(abi.encodePacked(imi  )));
         assertTrue(keccak256(abi.encodePacked(i  ))     == keccak256(abi.encodePacked(iimi )));
         assertTrue(keccak256(abi.encodePacked(iii ))    == keccak256(abi.encodePacked(iiime)));
         assertTrue(keccak256(abi.encodePacked(ii  ))    == keccak256(abi.encodePacked(vmiii)));
     }
+
+    // this is not written yet
+    function testExponentiateNestedSets () public {
+        
+        string memory iEiii                   = vno.exponentiateNestedSets(i, iii);         // one to the power of three is one
+        string memory iiEi                    = vno.exponentiateNestedSets(ii, i);        // two the power of one is one
+        string memory vEiii                   = vno.exponentiateNestedSets(v, iii);       // five to the power of three is 125
+        string memory oneHundredAndTwentyFive = vno.multiplyNestedSets(vno.multiplyNestedSets(v, v), v);
+        // string memory iiime     = vno.exponentiateNestedSets(iii, e);       // iiii expect revert
+
+        console.log("iEiii                   should be", i      ,   iEiii);
+        console.log("iiEi                    should be", ii     ,   iiEi);
+        console.log("vEiii                   should be", vEiii  ,   oneHundredAndTwentyFive);
+        // console.log("oneHundredAndTwentyFive should be", iii ,   iiime);
+        
+        assertTrue(keccak256(abi.encodePacked(i   ))   == keccak256(abi.encodePacked(iEiii)));
+        assertTrue(keccak256(abi.encodePacked(ii    ))   == keccak256(abi.encodePacked(iiEi  )));
+        assertTrue(keccak256(abi.encodePacked(vEiii  ))     == keccak256(abi.encodePacked(oneHundredAndTwentyFive )));
+
+    }
+ 
 
 
 // //    function testAM() public {
