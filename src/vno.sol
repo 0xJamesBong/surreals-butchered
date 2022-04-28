@@ -337,7 +337,7 @@ contract VNO is ERC721, Ownable {
     */
 
     struct numN {
-        uint256 nestedString;
+        string nestedString;
         uint256 number;
         uint256 order;
     }
@@ -349,7 +349,7 @@ contract VNO is ERC721, Ownable {
     */
     
     struct Metadata {
-        uint256 nestedString;
+        string nestedString;
         uint256 number;
         uint256 mintTime;
         uint256 order;
@@ -359,48 +359,61 @@ contract VNO is ERC721, Ownable {
     mapping(uint256 => numN)        public num_to_numN;
     mapping(string  => numN)        public nestedString_to_numN;
     
-    // function getCurrentTokenId() public view returns (uint256) {
-    //     uint256 tokenId = _tokenIdCounter.current();
-    //     return tokenId;
-    // }
+    function nestedStringToTokenId(string memory nestedString) public view returns (uint256 num) {
+        uint256 x = utfStringLength(nestedString)/2-1;
+        return x;
+    }
 
-    // function getMinttimeFromTokenId(uint256 tokenId) public view returns (uint256) {
-    //     uint256 minttime = tokenId_to_metadata[tokenId].mintTime;
-    //     return minttime;
-    // }
+    function getCurrentTokenId() public view returns (uint256) {
+        uint256 tokenId = _tokenIdCounter.current();
+        return tokenId;
+    }
+
+    function getMinttimeFromTokenId(uint256 tokenId) public view returns (uint256) {
+        uint256 minttime = tokenId_to_metadata[tokenId].mintTime;
+        return minttime;
+    }
  
-    // function getNestedStringFromTokenId(uint256 tokenId) public view returns (string memory nestedString) {
-    //     string memory nestedString = tokenId_to_metadata[tokenId].number;
-    // }
+    function getNestedStringFromTokenId(uint256 tokenId) public view returns (string memory nestedString) {
+        string memory nestedString = tokenId_to_metadata[tokenId].nestedString;
+        return nestedString;
+    }
 
-    // function getNumFromTokenId(uint256 tokenId) public view returns (uint256) {
-    //     // uint256 num = tokenId_to_number[tokenId];
-    //     uint256 num = tokenId_to_metadata[tokenId].number;
-    //     return num;
-    // }
+    function getNumFromTokenId(uint256 tokenId) public view returns (uint256) {
+        // uint256 num = tokenId_to_number[tokenId];
+        uint256 num = tokenId_to_metadata[tokenId].number;
+        return num;
+    }
 
-    // function Time() public view returns (uint256) {
-    //     uint256 createTime = block.timestamp;
-    //     return createTime;
-    // }
+    function Time() public view returns (uint256) {
+        uint256 createTime = block.timestamp;
+        return createTime;
+    }
 
-    // function getOrderFromTokenId(uint256 tokenId) public view returns (uint256) {
-    //     uint256 order = tokenId_to_metadata[tokenId].order; 
-    //     return order;
-    // }
+    function getOrderFromTokenId(uint256 tokenId) public view returns (uint256) {
+        uint256 order = tokenId_to_metadata[tokenId].order; 
+        return order;
+    }
     
 
-    // function numExists(string memory nestedSet) public view returns (bool) {
+    function numExists(string memory nestedSet) public view returns (bool) {
     //     // https://ethereum.stackexchange.com/questions/11039/how-can-you-check-if-a-string-is-empty-in-solidity
-    //     bytes memory tempNestedSet = bytes(nestedSet_to_Num[nestedSet].identity); // Uses memory
-    //     // check if non-zero value in struct is zero
-    //     // if it is zero then you know that myMapping[key] doesn't yet exist
-    //     if(tempNestedSet.length != 0) {
-    //         return true;
-    //     } 
-    //     return false;
-    // }
+        bytes memory tempNestedSet = bytes(nestedString_to_numN[nestedSet].nestedString); // Uses memory
+        // check if non-zero value in struct is zero
+        // if it is zero then you know that myMapping[key] doesn't yet exist
+        if(tempNestedSet.length != 0) {
+            return true;
+        } 
+        return false;
+    }
 
+    // function makeZero() public returns (Num memory zero) {
+        // require(numExists(emptyset) == false);
+        // Num storage z = nestedSet_to_Num[emptyset];
+        // z.identity = emptyset;
+        // z.predecessor = emptyset;
+        // return z;
+    // }
 
     // function anotherMint(address to, uint256 num) public returns (uint256) {
         
@@ -423,13 +436,7 @@ contract VNO is ERC721, Ownable {
     // }
 
     
-    // function makeZero() public returns (Num memory zero) {
-    //     require(numExists(emptyset) == false);
-    //     Num storage z = nestedSet_to_Num[emptyset];
-    //     z.identity = emptyset;
-    //     z.predecessor = emptyset;
-    //     return z;
-    // }
+    
     
 
     // function getNum(string memory nestedSet) public returns (Num memory num) {
