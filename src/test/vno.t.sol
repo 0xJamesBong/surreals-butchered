@@ -222,16 +222,15 @@ contract VNOTest is DSTest {
         console.log("of which there are instances:", aliceInstances);
         console.log("it was minted at mint time:", aliceMintTime);
         console.log("the order was:", aliceOrder);
-        console.log(aliceNestedString);
+        console.log("The nested string of the token Alice owned is", aliceNestedString);
 
         console.log(vno.universalExists(0));
+        
         uint256 bobTokenId = vno.getCurrentTokenId();
+        
         vno.makeZero(bob);
         
-        console.log("bob's tokenId is", bobTokenId);
-
         string memory bobNestedString = vno.getUniversalFromTokenId(bobTokenId).nestedString;
-        console.log("this is bob's nested string:", bobNestedString);
         uint256 bobNumber = vno.getUniversalFromTokenId(bobTokenId).number;
         uint256 bobInstance = vno.getUniversalFromTokenId(bobTokenId).instances;
         (, uint256 bobMintTime, uint256 bobOrder) = vno.tokenId_to_metadata(bobTokenId);
@@ -241,6 +240,7 @@ contract VNOTest is DSTest {
         assertEq(bobInstance, 2);
         assertEq(bobMintTime, later);
         assertEq(bobOrder, 2);
+
         console.log("The time now is",block.timestamp);
         console.log("The owner of", bobTokenId, "is", vno.ownerOf(bobTokenId));
         console.log("And the address of Bob is", bob);
@@ -248,6 +248,7 @@ contract VNOTest is DSTest {
         console.log("of which there are instances:", bobInstance);
         console.log("it was minted at mint time:", bobMintTime);
         console.log("the order was:", bobOrder);
+        console.log("The nested string of the token Bob owned is", bobNestedString);
     }
 
 

@@ -336,7 +336,7 @@ contract VNO is ERC721, Ownable {
     the order updates every time a number is minted
     */
 
-    struct universal {
+    struct Universal {
         string nestedString;
         uint256 number;
         uint256 instances;
@@ -349,16 +349,18 @@ contract VNO is ERC721, Ownable {
     */
     
     struct Metadata {
-        universal num;
+        Universal universal;
         // string nestedString;
         // uint256 number;
         uint256 mintTime;
         uint256 order;
     }
 
-    mapping(uint256 => Metadata)    public tokenId_to_metadata;     // looks at the token's metadata 
-    mapping(uint256 => universal)        public num_to_universal;             //
-    mapping(string  => universal)        public nestedString_to_universal;    // looks at the object of the number
+    mapping(uint256 => Metadata)  public tokenId_to_metadata;     // looks at the token's metadata 
+    mapping(uint256 => Universal) public num_to_universal;             //
+    mapping(string  => Universal) public nestedString_to_universal;    // looks at the object of the number
+    // mapping(uint256 => address)   public universal_to_owner                  // owner of universal
+    mapping(uint256 => uint256) public universal_to_tokenId; 
     
 
     function nestedStringToNum(string memory nestedString) public returns (uint256 num) {
@@ -404,9 +406,9 @@ contract VNO is ERC721, Ownable {
 
     // get token metadata 
     
-    function tokenMetadata(uint256 tokenId) public returns (universal memory num, string memory nestedString, uint256 number, uint256 instances, uint256 mintTime, uint256 order) {
+    function tokenMetadata(uint256 tokenId) public returns (Universal memory num, string memory nestedString, uint256 number, uint256 instances, uint256 mintTime, uint256 order) {
         // this function unwraps the token metadata 
-        num = tokenId_to_metadata[tokenId].num;
+        num = tokenId_to_metadata[tokenId].universal;
 
         nestedString = num.nestedString;
         number = num.number;
@@ -418,10 +420,10 @@ contract VNO is ERC721, Ownable {
         return (num, nestedString, number, instances, mintTime, order);
     }
 
-    function getUniversalFromTokenId(uint256 tokenId) public view returns (universal memory num) {
+    function getUniversalFromTokenId(uint256 tokenId) public view returns (Universal memory universal) {
         // uint256 num = tokenId_to_number[tokenId];
-        num = tokenId_to_metadata[tokenId].num;
-        return num;
+        universal = tokenId_to_metadata[tokenId].universal;
+        return universal;
     }  
 
     function getNestedStringFromTokenId(uint256 tokenId) public view returns (string memory nestedString) {
@@ -449,18 +451,30 @@ contract VNO is ERC721, Ownable {
         instances = num_to_universal[num].instances;
         return instances;
     }
+    
 
+    // function ownerOfUniversal(uint256 num) public returns (address ownerOfUniversal) {
+    //     owner = num_to_universal[num];
+    //     return owner;
+    // }
 
+    // function changeOwnerOfUniversal(address newOwner, uint256 num) public {
+    //     // If a universal hasn't been made yet, this function will revert
+    //     // This function can only be called after a universal has been made 
+    //     // This means the setting of the genesis owner of a universal has to be done in the function that makes that universal
+    //     require (universalExists(), "The universal hasn't been made yet.");
+    //     require(msg.sender == universal_to_owner[num]);
+    //     universal_to_owner[num] = newOwner;    
+    // }
 
-
-    function makeZero(address to) public returns (uint256 tokenId) {
+    function makeZero(address maker) public returns (uint256 tokenId) {
         // checks if num is new, if new, increases its order to 1 (first!)
         // if not new, does nothing and goes straight next
         uint256 tokenId = _tokenIdCounter.current();
         if (!universalExists(0)) {
         // you can also use the following line to check if the number exists 
         // if ( nestedString_to_universal[emptyset].order == 0 ) {
-            universal storage x = num_to_universal[0];
+            Universal storage x = num_to_universal[0];
             x.nestedString = emptyset;
             x.number = nestedStringToNum(emptyset);
             x.instances = 1;
@@ -469,18 +483,260 @@ contract VNO is ERC721, Ownable {
             uint256 order = 1;
             uint256 mintTime = Time();
             tokenId_to_metadata[tokenId] = Metadata(x, mintTime, order);
+            universal_to_tokenId[0] = tokenId; 
         } else {
             uint256 instances = getInstances(0);    
             num_to_universal[0].instances = instances + 1;    
             uint256 order = instances + 1; 
             uint256 mintTime = Time();
             tokenId_to_metadata[tokenId] = Metadata(num_to_universal[0], mintTime, order);
+
         }
         _tokenIdCounter.increment();
         // 
-        _safeMint(to, tokenId);
+        _safeMint(maker, tokenId);
         return tokenId;
     }
+
+
+    function mintSuccessor(address maker, uint256 oldTokenId) public returns (uint256 newTokenId) {
+        // checks if num is new, if new, increases its order to 1 (first!)
+        // if not new, does nothing and goes straight next
+        uint256 currentNum = tokenId_to_metadata[oldTokenId].universal.number;
+        uint256 targetNum = currentNum + 1;
+
+        require(universalExists(currentNum) == true, "the universal of the predecessor has not been made yet");
+        require(ownerOf(oldTokenId) == maker, "you don't own the token you're making the successor of");
+        
+        uint256 newTokenId = _tokenIdCounter.current();
+        
+        string memory targetNumNestedString = successorString(tokenId_to_metadata[oldTokenId].universal.nestedString);
+
+        if (!universalExists(targetNum)) {
+        // you can also use the following line to check if the number exists 
+        // if ( nestedString_to_universal[emptyset].order == 0 ) {
+            Universal storage x = num_to_universal[targetNum];
+            x.nestedString = targetNumNestedString;
+            x.number = targetNum;
+            x.instances = 1;
+            uint256 order = 1;
+            uint256 mintTime = Time();
+            tokenId_to_metadata[newTokenId] = Metadata(x, mintTime, order);
+            universal_to_tokenId[targetNum] = newTokenId; 
+        } else {
+            uint256 instances = getInstances(targetNum);    
+            num_to_universal[targetNum].instances = instances + 1;    
+            uint256 order = instances + 1; 
+            uint256 mintTime = Time();
+            tokenId_to_metadata[newTokenId] = Metadata(num_to_universal[targetNum], mintTime, order);
+            
+            // if the token used to make the successor is not a universal, we will burn it. 
+            
+            if (universal_to_tokenId[currentNum] != oldTokenId ) {
+                _burn(oldTokenId);
+            }
+        }
+        _tokenIdCounter.increment();
+        
+        _safeMint(maker, newTokenId);
+        return newTokenId;
+    }
+
+
+    function mintByAddition(address maker, uint256 oldTokenId1, uint256 oldTokenId2) public returns (uint256 newTokenId) {
+        
+        
+        uint256 num1 = tokenId_to_metadata[oldTokenId1].universal.number;
+        uint256 num2 = tokenId_to_metadata[oldTokenId2].universal.number;
+        uint256 targetNum = num1 + num2;
+        
+        require(((universalExists(num1) == true) && (universalExists(num2) == true)), "the universals of the constituents don't exist has not been made yet");
+        require(((ownerOf(oldTokenId1) == maker) && (ownerOf(oldTokenId2) == maker)), "you don't own the tokens you're adding");
+        
+        uint256 newTokenId = _tokenIdCounter.current();
+        
+        string memory targetNumNestedString = addNestedSets(tokenId_to_metadata[oldTokenId1].universal.nestedString, tokenId_to_metadata[oldTokenId2].universal.nestedString);
+
+        if (!universalExists(targetNum)) {
+        // you can also use the following line to check if the number exists 
+        // if ( nestedString_to_universal[emptyset].order == 0 ) {
+            Universal storage x = num_to_universal[targetNum];
+            x.nestedString = targetNumNestedString;
+            x.number = targetNum;
+            x.instances = 1;
+            uint256 order = 1;
+            uint256 mintTime = Time();
+            tokenId_to_metadata[newTokenId] = Metadata(x, mintTime, order);
+            universal_to_tokenId[targetNum] = newTokenId; 
+        } else {
+            uint256 instances = getInstances(targetNum);    
+            num_to_universal[targetNum].instances = instances + 1;    
+            uint256 order = instances + 1; 
+            uint256 mintTime = Time();
+            tokenId_to_metadata[newTokenId] = Metadata(num_to_universal[targetNum], mintTime, order);
+            
+            // if the token used to make the successor is not a universal, we will burn it. 
+            
+            if (universal_to_tokenId[num1] != oldTokenId1 ) {
+                _burn(oldTokenId1);
+            }
+
+            if (universal_to_tokenId[num2] != oldTokenId2 ) {
+                _burn(oldTokenId2);
+            }
+        }
+        _tokenIdCounter.increment();
+        
+        _safeMint(maker, newTokenId);
+        return newTokenId;
+    }
+
+        function mintByMultiplication(address maker, uint256 oldTokenId1, uint256 oldTokenId2) public returns (uint256 newTokenId) {
+        
+        
+        uint256 num1 = tokenId_to_metadata[oldTokenId1].universal.number;
+        uint256 num2 = tokenId_to_metadata[oldTokenId2].universal.number;
+        uint256 targetNum = num1 + num2;
+        
+        require(((universalExists(num1) == true) && (universalExists(num2) == true)), "the universals of the constituents don't exist has not been made yet");
+        require(((ownerOf(oldTokenId1) == maker) && (ownerOf(oldTokenId2) == maker)), "you don't own the tokens you're adding");
+        
+        uint256 newTokenId = _tokenIdCounter.current();
+        
+        string memory targetNumNestedString = multiplyNestedSets(tokenId_to_metadata[oldTokenId1].universal.nestedString, tokenId_to_metadata[oldTokenId2].universal.nestedString);
+
+        if (!universalExists(targetNum)) {
+        // you can also use the following line to check if the number exists 
+        // if ( nestedString_to_universal[emptyset].order == 0 ) {
+            Universal storage x = num_to_universal[targetNum];
+            x.nestedString = targetNumNestedString;
+            x.number = targetNum;
+            x.instances = 1;
+            uint256 order = 1;
+            uint256 mintTime = Time();
+            tokenId_to_metadata[newTokenId] = Metadata(x, mintTime, order);
+            universal_to_tokenId[targetNum] = newTokenId; 
+        } else {
+            uint256 instances = getInstances(targetNum);    
+            num_to_universal[targetNum].instances = instances + 1;    
+            uint256 order = instances + 1; 
+            uint256 mintTime = Time();
+            tokenId_to_metadata[newTokenId] = Metadata(num_to_universal[targetNum], mintTime, order);
+            
+            // if the token used to make the successor is not a universal, we will burn it. 
+            
+            if (universal_to_tokenId[num1] != oldTokenId1 ) {
+                _burn(oldTokenId1);
+            }
+
+            if (universal_to_tokenId[num2] != oldTokenId2 ) {
+                _burn(oldTokenId2);
+            }
+        }
+        _tokenIdCounter.increment();
+        
+        _safeMint(maker, newTokenId);
+        return newTokenId;
+    }
+
+    function mintByExponentiation(address maker, uint256 oldTokenId1, uint256 oldTokenId2) public returns (uint256 newTokenId) {
+        
+        
+        uint256 num1 = tokenId_to_metadata[oldTokenId1].universal.number;
+        uint256 num2 = tokenId_to_metadata[oldTokenId2].universal.number;
+        uint256 targetNum = num1 + num2;
+        
+        require(((universalExists(num1) == true) && (universalExists(num2) == true)), "the universals of the constituents don't exist has not been made yet");
+        require(((ownerOf(oldTokenId1) == maker) && (ownerOf(oldTokenId2) == maker)), "you don't own the tokens you're adding");
+        
+        uint256 newTokenId = _tokenIdCounter.current();
+        
+        string memory targetNumNestedString = exponentiateNestedSets(tokenId_to_metadata[oldTokenId1].universal.nestedString, tokenId_to_metadata[oldTokenId2].universal.nestedString);
+
+        if (!universalExists(targetNum)) {
+        // you can also use the following line to check if the number exists 
+        // if ( nestedString_to_universal[emptyset].order == 0 ) {
+            Universal storage x = num_to_universal[targetNum];
+            x.nestedString = targetNumNestedString;
+            x.number = targetNum;
+            x.instances = 1;
+            uint256 order = 1;
+            uint256 mintTime = Time();
+            tokenId_to_metadata[newTokenId] = Metadata(x, mintTime, order);
+            universal_to_tokenId[targetNum] = newTokenId; 
+        } else {
+            uint256 instances = getInstances(targetNum);    
+            num_to_universal[targetNum].instances = instances + 1;    
+            uint256 order = instances + 1; 
+            uint256 mintTime = Time();
+            tokenId_to_metadata[newTokenId] = Metadata(num_to_universal[targetNum], mintTime, order);
+            
+            // if the token used to make the successor is not a universal, we will burn it. 
+            
+            if (universal_to_tokenId[num1] != oldTokenId1 ) {
+                _burn(oldTokenId1);
+            }
+
+            if (universal_to_tokenId[num2] != oldTokenId2 ) {
+                _burn(oldTokenId2);
+            }
+        }
+        _tokenIdCounter.increment();
+        
+        _safeMint(maker, newTokenId);
+        return newTokenId;
+    }
+
+        function mintBySubtraction(address maker, uint256 oldTokenId1, uint256 oldTokenId2) public returns (uint256 newTokenId) {
+        
+        
+        uint256 num1 = tokenId_to_metadata[oldTokenId1].universal.number;
+        uint256 num2 = tokenId_to_metadata[oldTokenId2].universal.number;
+        uint256 targetNum = num1 + num2;
+        
+        require(((universalExists(num1) == true) && (universalExists(num2) == true)), "the universals of the constituents don't exist has not been made yet");
+        require(((ownerOf(oldTokenId1) == maker) && (ownerOf(oldTokenId2) == maker)), "you don't own the tokens you're adding");
+        
+        uint256 newTokenId = _tokenIdCounter.current();
+        
+        string memory targetNumNestedString = subtractNestedSets(tokenId_to_metadata[oldTokenId1].universal.nestedString, tokenId_to_metadata[oldTokenId2].universal.nestedString);
+
+        if (!universalExists(targetNum)) {
+        // you can also use the following line to check if the number exists 
+        // if ( nestedString_to_universal[emptyset].order == 0 ) {
+            Universal storage x = num_to_universal[targetNum];
+            x.nestedString = targetNumNestedString;
+            x.number = targetNum;
+            x.instances = 1;
+            uint256 order = 1;
+            uint256 mintTime = Time();
+            tokenId_to_metadata[newTokenId] = Metadata(x, mintTime, order);
+            universal_to_tokenId[targetNum] = newTokenId; 
+        } else {
+            uint256 instances = getInstances(targetNum);    
+            num_to_universal[targetNum].instances = instances + 1;    
+            uint256 order = instances + 1; 
+            uint256 mintTime = Time();
+            tokenId_to_metadata[newTokenId] = Metadata(num_to_universal[targetNum], mintTime, order);
+            
+            // if the token used to make the successor is not a universal, we will burn it. 
+            
+            if (universal_to_tokenId[num1] != oldTokenId1 ) {
+                _burn(oldTokenId1);
+            }
+
+            if (universal_to_tokenId[num2] != oldTokenId2 ) {
+                _burn(oldTokenId2);
+            }
+        }
+        _tokenIdCounter.increment();
+        
+        _safeMint(maker, newTokenId);
+        return newTokenId;
+    }
+
+    
+
     // function makeZero(address to) public returns (uint256 tokenId) {
     //     // checks if num is new, if new, increases its order to 1 (first!)
     //     // if not new, does nothing and goes straight next
