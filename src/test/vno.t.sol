@@ -25,7 +25,7 @@ contract VNOTest is DSTest {
         vno = new VNO();
     }
     
-    struct universal {
+    struct Universal {
         string nestedString;
         uint256 number;
         uint256 instances;

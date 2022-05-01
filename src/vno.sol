@@ -130,12 +130,6 @@ contract VNO is ERC721, Ownable {
         }
     }
     
-
-    // struct Zero {
-    //     string identity;
-    //     string predecessor;
-    // }
-    
     string emptyset = "{}";
     string one = "{{}}";
     string predecessorOfZero = "{}";
@@ -144,14 +138,6 @@ contract VNO is ERC721, Ownable {
                                     // The VNO
 //////////////////////////////////////////////////////////////////////////////////////////
     
-
-    // modifier isNS (string memory where) {
-    //     (bool isNestedString,,) = isNestedString(where);
-    //     require(isNestedString == true);
-    //     _;
-    // }
-
-
 
     // addition and multiplication in vno are defined as such
     // for any numbers a,b
@@ -164,43 +150,36 @@ contract VNO is ERC721, Ownable {
         (bool isNestedString2,,) = isNestedString(nestedSet2);
         require(isNestedString1 == true, "nestedSet1 is not legal nested string");
         require(isNestedString2 == true, "nestedSet2 is not legal nested string");
-        // string memory emptyset = "{}";
+        
         bytes32 compareNestedSet1 = keccak256(abi.encodePacked(nestedSet1));
         bytes32 compareNestedSet2 = keccak256(abi.encodePacked(nestedSet2));
         bytes32 compareEmptySet = keccak256(abi.encodePacked(emptyset));
         bytes32 compareOne = keccak256(abi.encodePacked(one));
         uint256 nestedSet1Length = utfStringLength(nestedSet1);
-        // uint256 nestedSet2Length = utfStringLength(nestedSet2);
+        
         
         if (stringsEq(nestedSet1, emptyset) || stringsEq(nestedSet2, emptyset)) {
-        // if (compareNestedSet1 == compareEmptySet || compareNestedSet2 == compareEmptySet) {
+        
             // if either one is 0 
             if (stringsEq(nestedSet1, emptyset) == false) {
-            // if (compareNestedSet1 != compareEmptySet) {
                 return nestedSet1;
             } else if (stringsEq(nestedSet2, emptyset) == false) {
-            // } else if (compareNestedSet2 != compareEmptySet) {
                 return nestedSet2; 
             } else {
                 return emptyset;
             }                
-
         } else if (stringsEq(nestedSet1, one) || stringsEq(nestedSet2, one)) {
-        // } else if (compareNestedSet1 == compareOne || compareNestedSet2 == compareOne) {
-            // if either one is 1 
             if (stringsEq(nestedSet1, one) == false) {
-            // if (compareNestedSet1 != compareOne) {
                 return successorString(nestedSet1);
             } else if ( stringsEq(nestedSet2, one) == false) {
-            // } else if ( compareNestedSet2 != compareOne) {
                 return successorString(nestedSet2);
             } else {
-                // both of them are 1, so the sum is just the successor of either, which is 2
                 return successorString(nestedSet1);
             }
         } else {
             string memory substring1 = substring(nestedSet1, 0, nestedSet1Length/2-1);
             string memory substring2 = substring(nestedSet1, nestedSet1Length/2, nestedSet1Length-1);
+            
             // concatenating the three strings together, sandwiching the successor of nestedSet2 with the two substrings obtained from nestedSet1
             return predecessorString(string(abi.encodePacked(abi.encodePacked(substring1, successorString(nestedSet2)), substring2)));    
         }
@@ -230,41 +209,21 @@ contract VNO is ERC721, Ownable {
         (bool isNestedString2,,) = isNestedString(nestedSet2);
         require(isNestedString1 == true, "nestedSet1 is not legal nested string");
         require(isNestedString2 == true, "nestedSet2 is not legal nested string");
-        // string memory emptyset = "{}";
+        
         bytes32 compareNestedSet1 = keccak256(abi.encodePacked(nestedSet1));
         bytes32 compareNestedSet2 = keccak256(abi.encodePacked(nestedSet2));
         bytes32 compareEmptySet = keccak256(abi.encodePacked(emptyset));
         bytes32 compareOne = keccak256(abi.encodePacked(one));
-        // uint256 nestedSet1Length = utfStringLength(nestedSet1);
-        // uint256 nestedSet2Length = utfStringLength(nestedSet2);
-
-        // a * 0 = 0, a * S(b) = a * b + a        
-        // a * 0 = 0, a * b = a * P(b) + a = a * (b - 1) + a = a * b    
-        // the shorter string is put inside the sandwich; because that's the object that will be iterated on
-
-        // if (comepareNestedSet1 == compareNestedSet2 || isSubstring(nestedSet1, nestedSet2) == true) {
-            // nestedSet1 <= nestedSet2
-            // breaking nestedSet1 into two parts, which are then reorganised to sandwich nestedSet2
-            // string memory substring1 = substring(nestedSet2, 0, nestedSet2Length/2-1);
-            // string memory substring2 = substring(nestedSet2, nestedSet2Length/2, nestedSet2Length-1);
-        // } else {
-            // nestedSet2 < nestedSet1
-            // breaking nestedSet2 into two parts, which are then reorganised to sandwich nestedSet1
-            // string memory substring1 = substring(nestedSet1, 0, nestedSet1Length/2-1);
-            // string memory substring2 = substring(nestedSet1, nestedSet1Length/2, nestedSet1Length-1);
-        // }
         if (stringsEq(nestedSet1, emptyset) || stringsEq(nestedSet2, emptyset)) {
-        // if (compareNestedSet1 == compareEmptySet || compareNestedSet2 == compareEmptySet) {
             return emptyset;
         } else if (stringsEq(nestedSet1, one) || stringsEq(nestedSet2, one)) {
-        // } else if (compareNestedSet1 == compareOne || compareNestedSet2 == compareOne) {
+        
             if (stringsEq(nestedSet1, one)) {
                 return nestedSet2;
             } else {
                 return nestedSet1;
             }
         } else if (isSubstring(nestedSet1, nestedSet2) || stringsEq(nestedSet1, nestedSet2)) {
-        // } else if (isSubstring(nestedSet1, nestedSet2) || compareNestedSet1 == compareNestedSet2) {
             return addNestedSets(multiplyNestedSets(nestedSet2, predecessorString(nestedSet1)), nestedSet2);
         } else {
             return addNestedSets(multiplyNestedSets(nestedSet1, predecessorString(nestedSet2)), nestedSet1);
@@ -273,20 +232,8 @@ contract VNO is ERC721, Ownable {
     }
 
 
-// addition and multiplication in vno are defined as such
-// for any numbers a,b
-// a + 0 = a, a + S(b) = S(a+b)
-// a * 0 = 0, a * S(b) = a * b + a
-// the definition is therefore recursive
-// 
-    // function multiply(uint256 num1, uint256 num2) {}
-    // 
-    // function exponentiate(uint256 num1, uint256 num1) {}
 
-    // Return argument type struct VNO.Num storage pointer is not implicitly 
-    // convertible to expected type (type of first return variable) struct
-    //  VNO.Num memory.
-
+    // for any numbers a,b
     // a ^ S(b) = a * a ^ b 
     // a ^ b = a * a ^ P(b)
     function exponentiateNestedSets (string memory base, string memory exponent) public returns (string memory addedNestedSet) {
@@ -294,8 +241,8 @@ contract VNO is ERC721, Ownable {
         // although a  ^ 0 == 1 is common knowledge; the proof implicitly assumes the inverse of a, which we do not in this construction
         // therefore the exponentiation here is purely a computational shortcut
         require(!stringsEq(exponent, emptyset));
-        // // revert if 0 ^ 0 
-        // require( !stringsEq(base, emptyset) && !stringsEq(exponent, emptyset));
+            // // revert if 0 ^ 0 
+            // require( !stringsEq(base, emptyset) && !stringsEq(exponent, emptyset));
         (bool isNestedString1,,) = isNestedString(base);
         (bool isNestedString2,,) = isNestedString(exponent);
         require(isNestedString1 == true, "nestedSet1 is not legal nested string");
@@ -315,33 +262,11 @@ contract VNO is ERC721, Ownable {
 //////////////////////////////////////////////////////////////////////////////////////////
 
 
-    // struct Num {
-    //     string identity;
-    //     string predecessor; 
-    // }
-
-    // uint256 public createTime;
-    
-    /* 
-    we need two structs because one represents the Idea - the metaphysical object - of the number
-    and the other represents the metadata of the token
-
-
-    the order counts how many NFTs of the same number has been minted
-    in a sense, if the struct universal is the Universal, the very idea of the Number,
-    then the order is the number of instances - particulars - of the Universal instantiated
-
-    a virgin number has order of 0 
-    first mints of a number has order 0
-    the order updates every time a number is minted
-    */
-
     struct Universal {
         string nestedString;
         uint256 number;
         uint256 instances;
     }
-
 
     /*
     The Metadata Struct stores the metadata of each NFT 
@@ -392,20 +317,6 @@ contract VNO is ERC721, Ownable {
         return false;
     }
 
-
-    // function universalExists(string memory nestedSet) public view returns (bool) {
-    //     //   checks if the metaphysical object of number exists
-    //     //     // https://ethereum.stackexchange.com/questions/11039/how-can-you-check-if-a-string-is-empty-in-solidity
-    //     bytes memory tempNestedSet = bytes(nestedString_to_universal[nestedSet].nestedString); // Uses memory
-    //     // check if non-zero value in struct is zero
-    //     // if it is zero then you know that myMapping[key] doesn't yet exist
-    //     if(tempNestedSet.length != 0) {
-    //         return true;
-    //     } 
-    //     return false;
-    // }
-
-    // get token metadata 
     
     function tokenMetadata(uint256 tokenId) public returns (Universal memory num, string memory nestedString, uint256 number, uint256 instances, uint256 mintTime, uint256 order) {
         // this function unwraps the token metadata 
@@ -452,21 +363,11 @@ contract VNO is ERC721, Ownable {
         instances = num_to_universal[num].instances;
         return instances;
     }
-    
 
-    // function ownerOfUniversal(uint256 num) public returns (address ownerOfUniversal) {
-    //     owner = num_to_universal[num];
-    //     return owner;
-    // }
+//////////////////////////////////////////////////////////////////////////////////////////
+                            // Minting Functionality
+//////////////////////////////////////////////////////////////////////////////////////////
 
-    // function changeOwnerOfUniversal(address newOwner, uint256 num) public {
-    //     // If a universal hasn't been made yet, this function will revert
-    //     // This function can only be called after a universal has been made 
-    //     // This means the setting of the genesis owner of a universal has to be done in the function that makes that universal
-    //     require (universalExists(), "The universal hasn't been made yet.");
-    //     require(msg.sender == universal_to_owner[num]);
-    //     universal_to_owner[num] = newOwner;    
-    // }
 
     function makeZero(address maker) public returns (uint256 tokenId) {
         // checks if num is new, if new, increases its order to 1 (first!)
@@ -618,8 +519,6 @@ contract VNO is ERC721, Ownable {
         string memory targetNumNestedString = multiplyNestedSets(tokenId_to_metadata[oldTokenId1].universal.nestedString, tokenId_to_metadata[oldTokenId2].universal.nestedString);
 
         if (!universalExists(targetNum)) {
-        // you can also use the following line to check if the number exists 
-        // if ( nestedString_to_universal[emptyset].order == 0 ) {
             Universal storage x = num_to_universal[targetNum];
             x.nestedString = targetNumNestedString;
             x.number = targetNum;
@@ -667,8 +566,6 @@ contract VNO is ERC721, Ownable {
         string memory targetNumNestedString = exponentiateNestedSets(tokenId_to_metadata[oldTokenId1].universal.nestedString, tokenId_to_metadata[oldTokenId2].universal.nestedString);
 
         if (!universalExists(targetNum)) {
-        // you can also use the following line to check if the number exists 
-        // if ( nestedString_to_universal[emptyset].order == 0 ) {
             Universal storage x = num_to_universal[targetNum];
             x.nestedString = targetNumNestedString;
             x.number = targetNum;
@@ -716,8 +613,6 @@ contract VNO is ERC721, Ownable {
         string memory targetNumNestedString = subtractNestedSets(tokenId_to_metadata[oldTokenId1].universal.nestedString, tokenId_to_metadata[oldTokenId2].universal.nestedString);
 
         if (!universalExists(targetNum)) {
-        // you can also use the following line to check if the number exists 
-        // if ( nestedString_to_universal[emptyset].order == 0 ) {
             Universal storage x = num_to_universal[targetNum];
             x.nestedString = targetNumNestedString;
             x.number = targetNum;
@@ -750,163 +645,4 @@ contract VNO is ERC721, Ownable {
         return newTokenId;
     }
 
-    
-
-    // function makeZero(address to) public returns (uint256 tokenId) {
-    //     // checks if num is new, if new, increases its order to 1 (first!)
-    //     // if not new, does nothing and goes straight next
-    //     if (!universalExists(emptyset)) {
-    //     // you can also use the following line to check if the number exists 
-    //     // if ( nestedString_to_universal[emptyset].order == 0 ) {
-    //         nestedString_to_universal[emptyset].nestedString = emptyset;
-    //         nestedString_to_universal[emptyset].number = nestedStringToNum(emptyset);
-    //         // nestedString_to_universal[emptyset].instances = 1;
-    //         // uint256 order = nestedString_to_universal[emptyset].instances;
-    //     } else {
-    //         // nestedString_to_universal[emptyset].instances = getInstances(emptyset) + 1;
-    //         // uint256 order = getInstances(emptyset) + 1; 
-    //     }
-    //     uint256 instances = getInstances(emptyset);
-    //     universal storage x = nestedString_to_universal[emptyset];
-    //     nestedString_to_universal[emptyset].instances = instances + 1;
-    //     uint256 order = instances + 1; 
-    //     uint256 tokenId = _tokenIdCounter.current();
-    //     uint256 mintTime = Time();
-
-    //     tokenId_to_metadata[tokenId] = Metadata(x, mintTime, order);
-    //     // num_to_universal[num].order+=1; 
-    //     _tokenIdCounter.increment();
-    //     // 
-    //     _safeMint(to, tokenId);
-    //     return tokenId;
-    // }
-    
-    // function makeZero() public returns (Num memory zero) {
-        // require(universalExists(emptyset) == false);
-        // Num storage z = nestedSet_to_Num[emptyset];
-        // z.identity = emptyset;
-        // z.predecessor = emptyset;
-        // return z;
-    // }
-
-    // function anotherMint(address to, uint256 num) public returns (uint256) {
-        
-    //     // checks if num is new, if new, increases its order to 1 (first!)
-    //     // if not new, does nothing and goes straight next
-    //     if ( num_to_universal[num].order == 0 ) {
-    //         num_to_universal[num].number = num;
-    //         num_to_universal[num].order = 1;
-    //     }
-        
-    //     uint256 order = num_to_universal[num].order;
-    //     uint256 tokenId = _tokenIdCounter.current();
-    //     uint256 mintTime = Time();
-    //     tokenId_to_metadata[tokenId] = Metadata(num, mintTime, order);
-    //     num_to_universal[num].order+=1; 
-    //     _tokenIdCounter.increment();
-        
-    //     _safeMint(to, tokenId);
-    //     return tokenId;
-    // }
-
-    
-    
-    
-
-    // function getNum(string memory nestedSet) public returns (Num memory num) {
-    //     num = nestedSet_to_Num[nestedSet];
-    //     return num;
-    // }
-
-    // function getNumIdentity(string memory nestedSet) public view returns (string memory numIdentity) {
-    //     numIdentity  = nestedSet_to_Num[nestedSet].identity;
-    //     return numIdentity;
-    // }
- 
-    // function getNumPredecessor(string memory nestedSet) public view returns (string memory numPredecessor) {
-    //     numPredecessor = nestedSet_to_Num[nestedSet].predecessor;
-    //     return numPredecessor;
-    // }
-
-    // function makeSuccessor(Num memory _predecessor) public returns (Num memory successor) {
-    //     // require(universalExists(emptyset) == true);
-    //     // require(universalExists(emptyset) == false);
-    //     bytes memory _predecessorIdentity = abi.encodePacked(_predecessor.identity);
-    //     string memory successorString = string(abi.encodePacked("{", _predecessorIdentity, "}"));
-    //     // string memory successorString = successorString(_predecessor.identity);
-    //     Num storage n = nestedSet_to_Num[successorString];
-    //     n.identity = successorString;
-    //     n.predecessor = _predecessor.identity;
-    //     return n;
-    // }
-    
-    //  struct Person
-    // {
-    //     string name;
-    //     uint age;
-    // }
-
-// function getSome() public returns (Person a)
-//     {
-//         Person storage p;
-//         p.name = "kashish";
-//         p.age =20;
-//         return p;
-//     }
-
-
-//     struct IpfsHash {
-//     bytes32 hash;
-//     uint hashSize;
-//   }
-
-//   struct Member {
-//     IpfsHash ipfsHash;
-//   }
-
-//   mapping(uint => Member) members;
-
-//   function addMember(uint id, bytes32 hash, uint size) public returns(bool success) {
-//     members[id].ipfsHash.hash = hash;
-//     members[id].ipfsHash.hashSize = size;
-//     return true;
-//   }
-
-//   function getMember(uint id) public constant returns(bytes32 hash, uint hashSize) {
-//     return(members[id].ipfsHash.hash, members[id].ipfsHash.hashSize);
-//   }
-
-// Returning structs in new version in solidity
-// https://ethereum.stackexchange.com/questions/29365/returning-structs-in-new-version-in-solidity
-
-//  struct Person
-//     {
-//         string name;
-//         uint age;
-//     }
-
-// function getSome() public returns (Person a)
-//     {
-//         Person storage p;
-//         p.name = "kashish";
-//         p.age =20;
-//         return p;
-//     }
-
-// function wantSome() public returns (string,uint)
-//     {
-//         Person storage p2 =getSome();
-//         return (p2.name,p2.age); // return multiple values like this
-//     }
-
-//     function makeNumber(address to, uint256 n) {
-        
-//     }
-
-//     function makeSuccessor(address to uint256 tokenId) {
-        
-//     }
-
-
-   
 }
