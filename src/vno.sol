@@ -315,12 +315,12 @@ contract VNO is ERC721, Ownable {
 //////////////////////////////////////////////////////////////////////////////////////////
 
 
-    struct Num {
-        string identity;
-        string predecessor; 
-    }
+    // struct Num {
+    //     string identity;
+    //     string predecessor; 
+    // }
 
-    uint256 public createTime;
+    // uint256 public createTime;
     
     /* 
     we need two structs because one represents the Idea - the metaphysical object - of the number
@@ -328,7 +328,7 @@ contract VNO is ERC721, Ownable {
 
 
     the order counts how many NFTs of the same number has been minted
-    in a sense, if the struct numN is the Universal, the very idea of the Number,
+    in a sense, if the struct universal is the Universal, the very idea of the Number,
     then the order is the number of instances - particulars - of the Universal instantiated
 
     a virgin number has order of 0 
@@ -336,7 +336,7 @@ contract VNO is ERC721, Ownable {
     the order updates every time a number is minted
     */
 
-    struct numN {
+    struct universal {
         string nestedString;
         uint256 number;
         uint256 instances;
@@ -349,7 +349,7 @@ contract VNO is ERC721, Ownable {
     */
     
     struct Metadata {
-        numN num;
+        universal num;
         // string nestedString;
         // uint256 number;
         uint256 mintTime;
@@ -357,16 +357,11 @@ contract VNO is ERC721, Ownable {
     }
 
     mapping(uint256 => Metadata)    public tokenId_to_metadata;     // looks at the token's metadata 
-    mapping(uint256 => numN)        public num_to_numN;             //
-    mapping(string  => numN)        public nestedString_to_numN;    // looks at the object of the number
+    mapping(uint256 => universal)        public num_to_universal;             //
+    mapping(string  => universal)        public nestedString_to_universal;    // looks at the object of the number
     
 
-    function tokenMetadata(uint256 tokenId) public returns (string memory nestedString, uint256 number, uint256 order) {
-        (nestedString, number, order) = tokenId_to_metadata[tokenId];
-        return (nestedString, number, order);
-    }
-
-    function nestedStringToNum(string memory nestedString) public view returns (uint256 num) {
+    function nestedStringToNum(string memory nestedString) public returns (uint256 num) {
         uint256 x = utfStringLength(nestedString)/2-1;
         return x;
     }
@@ -376,41 +371,16 @@ contract VNO is ERC721, Ownable {
         return tokenId;
     }
 
-    function getInstances(string memory nestedString) public view returns (uint256 instances) {
-        instances = nestedString_to_numN[nestedString].instances;
-        return instances;
+    function Time() public view returns (uint256 timeCreated) {
+        timeCreated = block.timestamp;
+        return timeCreated;
     }
 
-    function getMinttimeFromTokenId(uint256 tokenId) public view returns (uint256) {
-        uint256 minttime = tokenId_to_metadata[tokenId].mintTime;
-        return minttime;
-    }
- 
-    function getNestedStringFromTokenId(uint256 tokenId) public view returns (string memory nestedString) {
-        string memory nestedString = tokenId_to_metadata[tokenId].nestedString;
-        return nestedString;
-    }
-
-    function getNumFromTokenId(uint256 tokenId) public view returns (uint256) {
-        // uint256 num = tokenId_to_number[tokenId];
-        uint256 num = tokenId_to_metadata[tokenId].number;
-        return num;
-    }
-
-    function Time() public view returns (uint256) {
-        uint256 createTime = block.timestamp;
-        return createTime;
-    }
-
-    function getOrderFromTokenId(uint256 tokenId) public view returns (uint256) {
-        uint256 order = tokenId_to_metadata[tokenId].order; 
-        return order;
-    }
     
-    function numExists(string memory nestedSet) public view returns (bool) {
+    function universalExists(uint256 num) public view returns (bool) {
         //   checks if the metaphysical object of number exists
         //     // https://ethereum.stackexchange.com/questions/11039/how-can-you-check-if-a-string-is-empty-in-solidity
-        bytes memory tempNestedSet = bytes(nestedString_to_numN[nestedSet].nestedString); // Uses memory
+        bytes memory tempNestedSet = bytes(num_to_universal[num].nestedString); // Uses memory
         // check if non-zero value in struct is zero
         // if it is zero then you know that myMapping[key] doesn't yet exist
         if(tempNestedSet.length != 0) {
@@ -419,36 +389,129 @@ contract VNO is ERC721, Ownable {
         return false;
     }
 
+
+    // function universalExists(string memory nestedSet) public view returns (bool) {
+    //     //   checks if the metaphysical object of number exists
+    //     //     // https://ethereum.stackexchange.com/questions/11039/how-can-you-check-if-a-string-is-empty-in-solidity
+    //     bytes memory tempNestedSet = bytes(nestedString_to_universal[nestedSet].nestedString); // Uses memory
+    //     // check if non-zero value in struct is zero
+    //     // if it is zero then you know that myMapping[key] doesn't yet exist
+    //     if(tempNestedSet.length != 0) {
+    //         return true;
+    //     } 
+    //     return false;
+    // }
+
+    // get token metadata 
+    
+    function tokenMetadata(uint256 tokenId) public returns (universal memory num, string memory nestedString, uint256 number, uint256 instances, uint256 mintTime, uint256 order) {
+        // this function unwraps the token metadata 
+        num = tokenId_to_metadata[tokenId].num;
+
+        nestedString = num.nestedString;
+        number = num.number;
+        instances = num.instances; 
+        
+        mintTime = tokenId_to_metadata[tokenId].mintTime;
+        order = tokenId_to_metadata[tokenId].order;
+        
+        return (num, nestedString, number, instances, mintTime, order);
+    }
+
+    function getUniversalFromTokenId(uint256 tokenId) public view returns (universal memory num) {
+        // uint256 num = tokenId_to_number[tokenId];
+        num = tokenId_to_metadata[tokenId].num;
+        return num;
+    }  
+
+    function getNestedStringFromTokenId(uint256 tokenId) public view returns (string memory nestedString) {
+        nestedString = getUniversalFromTokenId(tokenId).nestedString;
+        return nestedString;
+    }
+
+    function getNumberFromTokenId(uint256 tokenId) public view returns (uint256 number) {
+        number = getUniversalFromTokenId(tokenId).number;
+        return number;
+    }
+
+    function getInstancesFromTokenId(uint256 tokenId) public view returns (uint256 instances) {
+        instances = getUniversalFromTokenId(tokenId).instances;
+        return instances;
+    }
+
+    function getMinttimeFromTokenId(uint256 tokenId) public view returns (uint256 mintTime) {
+        mintTime = tokenId_to_metadata[tokenId].mintTime;
+        return mintTime;
+    }
+
+    function getInstances(uint256 num) public view returns (uint256 instances) {
+    
+        instances = num_to_universal[num].instances;
+        return instances;
+    }
+
+
+
+
     function makeZero(address to) public returns (uint256 tokenId) {
         // checks if num is new, if new, increases its order to 1 (first!)
         // if not new, does nothing and goes straight next
-        if (!numExists(emptyset)) {
-        // you can also use the following line to check if the number exists 
-        // if ( nestedString_to_numN[emptyset].order == 0 ) {
-            nestedString_to_numN[emptyset].nestedString = emptyset;
-            nestedString_to_numN[emptyset].number = nestedStringToNum(emptyset);
-            // nestedString_to_numN[emptyset].instances = 1;
-            // uint256 order = nestedString_to_numN[emptyset].instances;
-        } else {
-            // nestedString_to_numN[emptyset].instances = getInstances(emptyset) + 1;
-            // uint256 order = getInstances(emptyset) + 1; 
-        }
-        numN storage x = nestedString_to_numN[emptyset];
-        nestedString_to_numN[emptyset].instances = getInstances(emptyset) + 1;
-        uint256 order = getInstances(emptyset) + 1; 
         uint256 tokenId = _tokenIdCounter.current();
-        uint256 mintTime = Time();
-
-        tokenId_to_metadata[tokenId] = Metadata(x, mintTime, order);
-        // num_to_numN[num].order+=1; 
+        if (!universalExists(0)) {
+        // you can also use the following line to check if the number exists 
+        // if ( nestedString_to_universal[emptyset].order == 0 ) {
+            universal storage x = num_to_universal[0];
+            x.nestedString = emptyset;
+            x.number = nestedStringToNum(emptyset);
+            x.instances = 1;
+            // nestedString_to_universal[emptyset].instances = 1;
+            // uint256 order = nestedString_to_universal[emptyset].instances;
+            uint256 order = 1;
+            uint256 mintTime = Time();
+            tokenId_to_metadata[tokenId] = Metadata(x, mintTime, order);
+        } else {
+            uint256 instances = getInstances(0);    
+            num_to_universal[0].instances = instances + 1;    
+            uint256 order = instances + 1; 
+            uint256 mintTime = Time();
+            tokenId_to_metadata[tokenId] = Metadata(num_to_universal[0], mintTime, order);
+        }
         _tokenIdCounter.increment();
         // 
         _safeMint(to, tokenId);
         return tokenId;
     }
+    // function makeZero(address to) public returns (uint256 tokenId) {
+    //     // checks if num is new, if new, increases its order to 1 (first!)
+    //     // if not new, does nothing and goes straight next
+    //     if (!universalExists(emptyset)) {
+    //     // you can also use the following line to check if the number exists 
+    //     // if ( nestedString_to_universal[emptyset].order == 0 ) {
+    //         nestedString_to_universal[emptyset].nestedString = emptyset;
+    //         nestedString_to_universal[emptyset].number = nestedStringToNum(emptyset);
+    //         // nestedString_to_universal[emptyset].instances = 1;
+    //         // uint256 order = nestedString_to_universal[emptyset].instances;
+    //     } else {
+    //         // nestedString_to_universal[emptyset].instances = getInstances(emptyset) + 1;
+    //         // uint256 order = getInstances(emptyset) + 1; 
+    //     }
+    //     uint256 instances = getInstances(emptyset);
+    //     universal storage x = nestedString_to_universal[emptyset];
+    //     nestedString_to_universal[emptyset].instances = instances + 1;
+    //     uint256 order = instances + 1; 
+    //     uint256 tokenId = _tokenIdCounter.current();
+    //     uint256 mintTime = Time();
+
+    //     tokenId_to_metadata[tokenId] = Metadata(x, mintTime, order);
+    //     // num_to_universal[num].order+=1; 
+    //     _tokenIdCounter.increment();
+    //     // 
+    //     _safeMint(to, tokenId);
+    //     return tokenId;
+    // }
     
     // function makeZero() public returns (Num memory zero) {
-        // require(numExists(emptyset) == false);
+        // require(universalExists(emptyset) == false);
         // Num storage z = nestedSet_to_Num[emptyset];
         // z.identity = emptyset;
         // z.predecessor = emptyset;
@@ -459,16 +522,16 @@ contract VNO is ERC721, Ownable {
         
     //     // checks if num is new, if new, increases its order to 1 (first!)
     //     // if not new, does nothing and goes straight next
-    //     if ( num_to_numN[num].order == 0 ) {
-    //         num_to_numN[num].number = num;
-    //         num_to_numN[num].order = 1;
+    //     if ( num_to_universal[num].order == 0 ) {
+    //         num_to_universal[num].number = num;
+    //         num_to_universal[num].order = 1;
     //     }
         
-    //     uint256 order = num_to_numN[num].order;
+    //     uint256 order = num_to_universal[num].order;
     //     uint256 tokenId = _tokenIdCounter.current();
     //     uint256 mintTime = Time();
     //     tokenId_to_metadata[tokenId] = Metadata(num, mintTime, order);
-    //     num_to_numN[num].order+=1; 
+    //     num_to_universal[num].order+=1; 
     //     _tokenIdCounter.increment();
         
     //     _safeMint(to, tokenId);
@@ -495,8 +558,8 @@ contract VNO is ERC721, Ownable {
     // }
 
     // function makeSuccessor(Num memory _predecessor) public returns (Num memory successor) {
-    //     // require(numExists(emptyset) == true);
-    //     // require(numExists(emptyset) == false);
+    //     // require(universalExists(emptyset) == true);
+    //     // require(universalExists(emptyset) == false);
     //     bytes memory _predecessorIdentity = abi.encodePacked(_predecessor.identity);
     //     string memory successorString = string(abi.encodePacked("{", _predecessorIdentity, "}"));
     //     // string memory successorString = successorString(_predecessor.identity);
