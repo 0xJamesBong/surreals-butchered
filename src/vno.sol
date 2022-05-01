@@ -361,6 +361,7 @@ contract VNO is ERC721, Ownable {
     mapping(string  => Universal) public nestedString_to_universal;    // looks at the object of the number
     // mapping(uint256 => address)   public universal_to_owner                  // owner of universal
     mapping(uint256 => uint256) public universal_to_tokenId; 
+    mapping(uint256 => uint256) universal_to_tax; 
     
 
     function nestedStringToNum(string memory nestedString) public returns (uint256 num) {
@@ -490,7 +491,7 @@ contract VNO is ERC721, Ownable {
             uint256 order = instances + 1; 
             uint256 mintTime = Time();
             tokenId_to_metadata[tokenId] = Metadata(num_to_universal[0], mintTime, order);
-
+            payUniversalOwner(0);
         }
         _tokenIdCounter.increment();
         // 
@@ -535,6 +536,7 @@ contract VNO is ERC721, Ownable {
             if (universal_to_tokenId[currentNum] != oldTokenId ) {
                 _burn(oldTokenId);
             }
+            payUniversalOwner(targetNum);
         }
         _tokenIdCounter.increment();
         
@@ -542,9 +544,18 @@ contract VNO is ERC721, Ownable {
         return newTokenId;
     }
 
+    function payUniversalOwner(uint256 num) internal {
+        uint256 tax = universal_to_tax[num];
+        payable(ownerOf(universal_to_tokenId[num])).transfer(tax);
+    }
+    
+    function setUniversalTax(uint256 num, uint256 amount) public {
+        require(msg.sender == ownerOf(universal_to_tokenId[num]), "msg.sender is not the owner of the universal!");
+        universal_to_tax[num] = amount;
+    }
+
 
     function mintByAddition(address maker, uint256 oldTokenId1, uint256 oldTokenId2) public returns (uint256 newTokenId) {
-        
         
         uint256 num1 = tokenId_to_metadata[oldTokenId1].universal.number;
         uint256 num2 = tokenId_to_metadata[oldTokenId2].universal.number;
@@ -584,6 +595,7 @@ contract VNO is ERC721, Ownable {
             if (universal_to_tokenId[num2] != oldTokenId2 ) {
                 _burn(oldTokenId2);
             }
+            payUniversalOwner(targetNum);
         }
         _tokenIdCounter.increment();
         
@@ -591,7 +603,7 @@ contract VNO is ERC721, Ownable {
         return newTokenId;
     }
 
-        function mintByMultiplication(address maker, uint256 oldTokenId1, uint256 oldTokenId2) public returns (uint256 newTokenId) {
+    function mintByMultiplication(address maker, uint256 oldTokenId1, uint256 oldTokenId2) public returns (uint256 newTokenId) {
         
         
         uint256 num1 = tokenId_to_metadata[oldTokenId1].universal.number;
@@ -632,6 +644,7 @@ contract VNO is ERC721, Ownable {
             if (universal_to_tokenId[num2] != oldTokenId2 ) {
                 _burn(oldTokenId2);
             }
+            payUniversalOwner(targetNum);
         }
         _tokenIdCounter.increment();
         
@@ -680,14 +693,15 @@ contract VNO is ERC721, Ownable {
             if (universal_to_tokenId[num2] != oldTokenId2 ) {
                 _burn(oldTokenId2);
             }
+            payUniversalOwner(targetNum);
         }
         _tokenIdCounter.increment();
         
         _safeMint(maker, newTokenId);
         return newTokenId;
     }
-
-        function mintBySubtraction(address maker, uint256 oldTokenId1, uint256 oldTokenId2) public returns (uint256 newTokenId) {
+        
+    function mintBySubtraction(address maker, uint256 oldTokenId1, uint256 oldTokenId2) public returns (uint256 newTokenId) {
         
         
         uint256 num1 = tokenId_to_metadata[oldTokenId1].universal.number;
@@ -728,6 +742,7 @@ contract VNO is ERC721, Ownable {
             if (universal_to_tokenId[num2] != oldTokenId2 ) {
                 _burn(oldTokenId2);
             }
+            payUniversalOwner(targetNum);
         }
         _tokenIdCounter.increment();
         
