@@ -380,6 +380,15 @@ contract VNO is ERC721, Ownable {
                             // Minting Functionality
 //////////////////////////////////////////////////////////////////////////////////////////
 
+    function payUniversalOwner(uint256 num) internal {
+        uint256 tax = universal_to_tax[num];
+        payable(ownerOf(universal_to_tokenId[num])).transfer(tax);
+    }
+    
+    function setUniversalTax(uint256 num, uint256 amount) public {
+        require(msg.sender == ownerOf(universal_to_tokenId[num]), "msg.sender is not the owner of the universal!");
+        universal_to_tax[num] = amount;
+    }
 
     function makeZero(address maker) public returns (uint256 tokenId) {
         // checks if num is new, if new, increases its order to 1 (first!)
@@ -404,7 +413,6 @@ contract VNO is ERC721, Ownable {
             uint256 order = instances + 1; 
             uint256 mintTime = Time();
             tokenId_to_metadata[tokenId] = Metadata(num_to_universal[0], mintTime, order);
-            payUniversalOwner(0);
         }
         _tokenIdCounter.increment();
         // 
@@ -443,14 +451,14 @@ contract VNO is ERC721, Ownable {
             uint256 order = instances + 1; 
             uint256 mintTime = Time();
             tokenId_to_metadata[newTokenId] = Metadata(num_to_universal[targetNum], mintTime, order);
+            // Minting a successor does not burn the token you're minting from
+            // This makes equivalent to a direct mint
             
-            // if the token used to make the successor is not a universal, we will burn it. 
-            
-            if (universal_to_tokenId[currentNum] != oldTokenId ) {
-                _burn(oldTokenId);
+            if (maker != ownerOf(universal_to_tokenId[targetNum])) {
+                payUniversalOwner(targetNum);
             }
-            payUniversalOwner(targetNum);
         }
+        
         _tokenIdCounter.increment();
         
         _safeMint(maker, newTokenId);
@@ -458,15 +466,7 @@ contract VNO is ERC721, Ownable {
     }
 
 
-    function payUniversalOwner(uint256 num) internal {
-        uint256 tax = universal_to_tax[num];
-        payable(ownerOf(universal_to_tokenId[num])).transfer(tax);
-    }
-    
-    function setUniversalTax(uint256 num, uint256 amount) public {
-        require(msg.sender == ownerOf(universal_to_tokenId[num]), "msg.sender is not the owner of the universal!");
-        universal_to_tax[num] = amount;
-    }
+
 
     function directMint(address maker, uint256 num) public returns (uint256 newTokenId) {
 
@@ -478,7 +478,9 @@ contract VNO is ERC721, Ownable {
         uint256 mintTime = Time();
         tokenId_to_metadata[newTokenId] = Metadata(num_to_universal[num], mintTime, order);
         
-        payUniversalOwner(num);
+        if (maker != ownerOf(universal_to_tokenId[num])) {
+            payUniversalOwner(num);
+        }
         
         _tokenIdCounter.increment();
         
@@ -526,7 +528,7 @@ contract VNO is ERC721, Ownable {
             if (universal_to_tokenId[num2] != oldTokenId2 ) {
                 _burn(oldTokenId2);
             }
-            payUniversalOwner(targetNum);
+            
         }
         _tokenIdCounter.increment();
         
@@ -573,7 +575,6 @@ contract VNO is ERC721, Ownable {
             if (universal_to_tokenId[num2] != oldTokenId2 ) {
                 _burn(oldTokenId2);
             }
-            payUniversalOwner(targetNum);
         }
         _tokenIdCounter.increment();
         
@@ -620,7 +621,7 @@ contract VNO is ERC721, Ownable {
             if (universal_to_tokenId[num2] != oldTokenId2 ) {
                 _burn(oldTokenId2);
             }
-            payUniversalOwner(targetNum);
+            
         }
         _tokenIdCounter.increment();
         
@@ -667,7 +668,7 @@ contract VNO is ERC721, Ownable {
             if (universal_to_tokenId[num2] != oldTokenId2 ) {
                 _burn(oldTokenId2);
             }
-            payUniversalOwner(targetNum);
+            
         }
         _tokenIdCounter.increment();
         
