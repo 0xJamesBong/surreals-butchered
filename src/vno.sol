@@ -87,11 +87,12 @@ contract VNO is ERC721, Ownable {
     function stringsEq(string memory nestedSet1, string memory nestedSet2) public returns (bool) {
         bytes32 compareNestedSet1 = keccak256(abi.encodePacked(nestedSet1));
         bytes32 compareNestedSet2 = keccak256(abi.encodePacked(nestedSet2));
-        if (compareNestedSet1 == compareNestedSet2) {
-            return true;
-        } else {
-            return false;
-        }
+        return (compareNestedSet1 == compareNestedSet2);
+        // if (compareNestedSet1 == compareNestedSet2) {
+            // return true;
+        // } else {
+            // return false;
+        // }
     }
 
     function isSubstring(string memory nestedSet1, string memory nestedSet2) public returns (bool) {
@@ -104,11 +105,13 @@ contract VNO is ERC721, Ownable {
         (bool isNestedString2,,) = isNestedString(nestedSet2);
         require(isNestedString1 == true, "nestedSet1 is not legal nested substring");
         require(isNestedString2 == true, "nestedSet2 is not legal nested substring");
-        if (utfStringLength(nestedSet1) < utfStringLength(nestedSet2)) {
-            return true;
-        } else {
-            return false;
-        }
+        return (utfStringLength(nestedSet1) < utfStringLength(nestedSet2));
+        
+        // if (utfStringLength(nestedSet1) < utfStringLength(nestedSet2)) {
+            // return true;
+        // } else {
+            // return false;
+        // }
     }
 
     function successorString(string memory nestedSet) public returns (string memory successor) {
@@ -123,11 +126,13 @@ contract VNO is ERC721, Ownable {
         (bool isNestedString,,) = isNestedString(nestedSet);
         require(isNestedString == true, "nestedSet is not legal nested string");
         bytes memory thisNestedSet = abi.encodePacked(nestedSet);
-        if (keccak256(thisNestedSet) == keccak256(abi.encodePacked(emptyset))) {
-            return emptyset;
-        } else {
-            return string(abi.encodePacked(substring(nestedSet, 1, utfStringLength(nestedSet)-1)));
-        }
+        string memory predecessorString = ((keccak256(thisNestedSet) == keccak256(abi.encodePacked(emptyset))) ? emptyset : string(abi.encodePacked(substring(nestedSet, 1, utfStringLength(nestedSet)-1))));
+        return predecessorString;
+        // if (keccak256(thisNestedSet) == keccak256(abi.encodePacked(emptyset))) {
+            // return emptyset;
+        // } else {
+            // return string(abi.encodePacked(substring(nestedSet, 1, utfStringLength(nestedSet)-1)));
+        // }
     }
     
     string emptyset = "{}";
@@ -196,11 +201,14 @@ contract VNO is ERC721, Ownable {
         require(isNestedString1 == true, "nestedSet1 is not legal nested string");
         require(isNestedString2 == true, "nestedSet2 is not legal nested string");
         require(isSubstring(subtrahend, minuend) == true || stringsEq(minuend, subtrahend), "the subtrahend is bigger than the minuend. You need to extend this number system to the integers to do that.");
-        if (stringsEq(minuend, subtrahend)) {
-            return emptyset; 
-        } else {
-            return successorString(subtractNestedSets(predecessorString(minuend), subtrahend));
-        }
+        
+        string memory result = ((stringsEq(minuend, subtrahend)) ? emptyset : successorString(subtractNestedSets(predecessorString(minuend), subtrahend)));
+        return result;
+        // if (stringsEq(minuend, subtrahend)) {
+            // return emptyset; 
+        // } else {
+            // return successorString(subtractNestedSets(predecessorString(minuend), subtrahend));
+        // }
     }
 
     function multiplyNestedSets (string memory nestedSet1, string memory nestedSet2) public returns (string memory addedNestedSet) {
@@ -217,12 +225,14 @@ contract VNO is ERC721, Ownable {
         if (stringsEq(nestedSet1, emptyset) || stringsEq(nestedSet2, emptyset)) {
             return emptyset;
         } else if (stringsEq(nestedSet1, one) || stringsEq(nestedSet2, one)) {
-        
-            if (stringsEq(nestedSet1, one)) {
-                return nestedSet2;
-            } else {
-                return nestedSet1;
-            }
+            
+            string memory result = ((stringsEq(nestedSet1, one)) ? nestedSet2 : nestedSet1);
+            return result;
+            // if (stringsEq(nestedSet1, one)) {
+                // return nestedSet2;
+            // } else {
+                // return nestedSet1;
+            // }
         } else if (isSubstring(nestedSet1, nestedSet2) || stringsEq(nestedSet1, nestedSet2)) {
             return addNestedSets(multiplyNestedSets(nestedSet2, predecessorString(nestedSet1)), nestedSet2);
         } else {
@@ -311,10 +321,12 @@ contract VNO is ERC721, Ownable {
         bytes memory tempNestedSet = bytes(num_to_universal[num].nestedString); // Uses memory
         // check if non-zero value in struct is zero
         // if it is zero then you know that myMapping[key] doesn't yet exist
-        if(tempNestedSet.length != 0) {
-            return true;
-        } 
-        return false;
+        return (tempNestedSet.length != 0);
+        
+        // if(tempNestedSet.length != 0) {
+            // return true;
+        // } 
+        // return false;
     }
 
     
