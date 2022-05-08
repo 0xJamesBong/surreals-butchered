@@ -89,11 +89,6 @@ contract VNO is ERC721, Ownable {
         bytes32 compareNestedSet1 = keccak256(abi.encodePacked(nestedSet1));
         bytes32 compareNestedSet2 = keccak256(abi.encodePacked(nestedSet2));
         return (compareNestedSet1 == compareNestedSet2);
-        // if (compareNestedSet1 == compareNestedSet2) {
-            // return true;
-        // } else {
-            // return false;
-        // }
     }
 
     function isSubstring(string memory nestedSet1, string memory nestedSet2) public returns (bool) {
@@ -106,13 +101,7 @@ contract VNO is ERC721, Ownable {
         (bool isNestedString2,,) = isNestedString(nestedSet2);
         require(isNestedString1 == true, "nestedSet1 is not legal nested substring");
         require(isNestedString2 == true, "nestedSet2 is not legal nested substring");
-        return (utfStringLength(nestedSet1) < utfStringLength(nestedSet2));
-        
-        // if (utfStringLength(nestedSet1) < utfStringLength(nestedSet2)) {
-            // return true;
-        // } else {
-            // return false;
-        // }
+        return (utfStringLength(nestedSet1) < utfStringLength(nestedSet2));    
     }
 
     function successorString(string memory nestedSet) public returns (string memory successor) {
@@ -129,11 +118,6 @@ contract VNO is ERC721, Ownable {
         bytes memory thisNestedSet = abi.encodePacked(nestedSet);
         string memory predecessorString = ((keccak256(thisNestedSet) == keccak256(abi.encodePacked(emptyset))) ? emptyset : string(abi.encodePacked(substring(nestedSet, 1, utfStringLength(nestedSet)-1))));
         return predecessorString;
-        // if (keccak256(thisNestedSet) == keccak256(abi.encodePacked(emptyset))) {
-            // return emptyset;
-        // } else {
-            // return string(abi.encodePacked(substring(nestedSet, 1, utfStringLength(nestedSet)-1)));
-        // }
     }
     
     string emptyset = "{}";
@@ -144,11 +128,9 @@ contract VNO is ERC721, Ownable {
                                     // The VNO
 //////////////////////////////////////////////////////////////////////////////////////////
     
-
-    // addition and multiplication in vno are defined as such
+    // Addition is defined as such:
     // for any numbers a,b
-    // a + 0 = a, a + S(b) = S(a+b)
-    // a * 0 = 0, a * S(b) = a * b + a
+    // a + 0 = a, a + S(b) = S(a+b), S() being "successor of"
     // the definition is therefore recursive
 
     function addNestedSets (string memory nestedSet1, string memory nestedSet2) public returns (string memory addedNestedSet) {
@@ -190,27 +172,22 @@ contract VNO is ERC721, Ownable {
             return predecessorString(string(abi.encodePacked(abi.encodePacked(substring1, successorString(nestedSet2)), substring2)));    
         }
     }
-
-    // a - a = 0, S(a) - b = S(a-b)
-    // a - a = 0, a - b = S(P(a)) - b = S(P(a)-b)
-    // subtraction for any x, x-x =0, s(x)-n = s(x-n)
+    // Subtraction is defined as such:
+    // For any x, x-x =0, S(x)-n = S(x-n), S() being "successor of"
+    // Note that we are careful not to produce negative numbers - this we do by require the subtrahend is a substring of the minuend
+    // for the expression a - b, a = minuend, b = subtrahend
     function subtractNestedSets (string memory minuend, string memory subtrahend) public returns (string memory addedNestedSet) {
-        // a - b 
-        // a = minuend, b = subtrahend
         (bool isNestedString1,,) = isNestedString(minuend);
         (bool isNestedString2,,) = isNestedString(subtrahend);
         require(isNestedString1 == true, "nestedSet1 is not legal nested string");
         require(isNestedString2 == true, "nestedSet2 is not legal nested string");
         require(isSubstring(subtrahend, minuend) == true || stringsEq(minuend, subtrahend), "the subtrahend is bigger than the minuend. You need to extend this number system to the integers to do that.");
-        
         string memory result = ((stringsEq(minuend, subtrahend)) ? emptyset : successorString(subtractNestedSets(predecessorString(minuend), subtrahend)));
         return result;
-        // if (stringsEq(minuend, subtrahend)) {
-            // return emptyset; 
-        // } else {
-            // return successorString(subtractNestedSets(predecessorString(minuend), subtrahend));
-        // }
     }
+
+    // Multiplication is defined as such:
+    // For any a, b, a * 0 = 0, a * S(b) = a * b + a
 
     function multiplyNestedSets (string memory nestedSet1, string memory nestedSet2) public returns (string memory addedNestedSet) {
         
@@ -229,28 +206,21 @@ contract VNO is ERC721, Ownable {
             
             string memory result = ((stringsEq(nestedSet1, one)) ? nestedSet2 : nestedSet1);
             return result;
-            // if (stringsEq(nestedSet1, one)) {
-                // return nestedSet2;
-            // } else {
-                // return nestedSet1;
-            // }
         } else if (isSubstring(nestedSet1, nestedSet2) || stringsEq(nestedSet1, nestedSet2)) {
             return addNestedSets(multiplyNestedSets(nestedSet2, predecessorString(nestedSet1)), nestedSet2);
         } else {
             return addNestedSets(multiplyNestedSets(nestedSet1, predecessorString(nestedSet2)), nestedSet1);
         }
-
     }
 
 
-
-    // for any numbers a,b
-    // a ^ S(b) = a * a ^ b 
-    // a ^ b = a * a ^ P(b)
+    // Exponentiation is defined as such:
+    // for any numbers a,b  
+    // a ^ b = a * a ^ P(b), P() being "predecessor of"
     function exponentiateNestedSets (string memory base, string memory exponent) public returns (string memory addedNestedSet) {
         // revert if exponent is zero
-        // although a  ^ 0 == 1 is common knowledge; the proof implicitly assumes the inverse of a, which we do not in this construction
-        // therefore the exponentiation here is purely a computational shortcut
+        // Although a  ^ 0 == 1 is common knowledge; the proof implicitly assumes the existence of a multiplicative inverse of a, which we do not in this construction of the natural numbers
+        // Therefore, exponentiation here is purely a computational shortcut
         require(!stringsEq(exponent, emptyset));
             // // revert if 0 ^ 0 
             // require( !stringsEq(base, emptyset) && !stringsEq(exponent, emptyset));
@@ -268,6 +238,7 @@ contract VNO is ERC721, Ownable {
             return multiplyNestedSets(base, exponentiateNestedSets(base, predecessorString(exponent)));
         }
     }
+
 //////////////////////////////////////////////////////////////////////////////////////////
                         // The Object of the Number (metadata)
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -277,6 +248,7 @@ contract VNO is ERC721, Ownable {
         string nestedString;
         uint256 number;
         uint256 instances;
+        uint256[] allInstances; // entries are tokenIds
     }
 
     /*
@@ -525,9 +497,9 @@ contract VNO is ERC721, Ownable {
             // Minting a successor does not burn the token you're minting from
             // This makes equivalent to a direct mint
             
-            if (maker != ownerOf(universal_to_tokenId[targetNum])) {
-                payUniversalOwner(targetNum);
-            }
+            // if (maker != ownerOf(universal_to_tokenId[targetNum])) {
+                // payUniversalOwner(targetNum);
+            // }
         }
         
         _tokenIdCounter.increment();
@@ -536,9 +508,7 @@ contract VNO is ERC721, Ownable {
         return newTokenId;
     }
 
-
-
-
+    // 
     function directMint(address maker, uint256 num) public returns (uint256 newTokenId) {
 
         require(universalExists(num) == true, "the universal of the predecessor has not been made yet");
