@@ -5,7 +5,8 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
-import "../lib/ds-test/src/console.sol";
+// import "../lib/forge-std/lib/ds-test/src/console.sol";
+import "../lib/forge-std/src/console.sol";
 
 contract VNO is ERC721, Ownable {
     using Counters for Counters.Counter;
@@ -380,13 +381,83 @@ contract VNO is ERC721, Ownable {
                             // Minting Functionality
 //////////////////////////////////////////////////////////////////////////////////////////
 
-    function payUniversalOwner(uint256 num) internal {
-        uint256 tax = universal_to_tax[num];
-        payable(ownerOf(universal_to_tokenId[num])).transfer(tax);
+    // mapping(address => uint256) public addressToEarnings;
+    mapping(uint256 => uint256) public universalToBalance;
+    address payable treasury;
+    uint256 treasuryBalance;
+    uint256 mathBretherenTax;
+    
+
+    function setTreasuryAddress(address newTreasuryAddress) public onlyOwner () {
+        treasury = payable(newTreasuryAddress);
+        return; 
     }
     
+    function viewTreasuryBalances() public view returns (uint256 treasuryBalance) {
+        return treasury.balance;
+    }
+
+    function viewUniversalBalance(uint256 num) public view returns (uint256 universalBalance){
+        universalBalance = universalToBalance[num];
+        return universalBalance;
+    }
+
+
+    function setTreasuryTax(uint256 bp) public onlyOwner () {
+        // the Math Bretheren Tax applies to all Universal Owners
+        // the treasury tax is set in terms of basis points 
+        // The tax can range from 0 to 100*10000 = 1,000,000 (which amounts to 100%)
+        require(bp >= 0, "negative taxes are not allowed!");
+        require(bp <= 1000000, "negative taxes are not allowed!");
+        mathBretherenTax = bp;
+    }
+
+    function withdrawTreasury(uint256 amount, address to) public {
+        require(msg.sender == treasury, "you're not the treasury owner!");
+        require(amount <= treasuryBalance, "you're withdrawing more than the treasury!");
+        (bool success, ) = payable(to).call{value: amount}("");
+        require(success, "the withdrawal didn't go through");
+        if (success) {
+            treasuryBalance = treasuryBalance - amount;
+        }
+    }
+
+    function viewTreasuryTax() public view returns (uint256 treasuryTax) {
+        return mathBretherenTax;
+    }
+    
+    function viewTreasuryBalance() public view returns (uint256 treasuryBalance) {
+        return treasuryBalance;
+    }
+
+    function payUniversalOwner(uint256 num) internal {
+        uint256 tax = universal_to_tax[num];
+        // uint256 oldBalance = addressToEarnings[ownerOf(universal_to_tokenId[num])];
+        (bool success, ) = payable(address(this)).call{value: tax}("");
+        require(success, "tax didn't go through");
+        if (success) {
+            // recall that universal taxes are set as whole numbers, not percentages
+            universalToBalance[num] += tax*(1000000-mathBretherenTax)/1000000;
+        }        
+    }
+
+    // Needs non-Reentrancy Guard 
+    function withdrawUniversalOwnerBalance(uint256 num) public {
+        address universalOwner = ownerOf(universal_to_tokenId[num]);
+        require(msg.sender == universalOwner, "you don't own this Universal!");
+        require(universalToBalance[num] > 0, "there's no money for you withdraw!");
+
+        (bool success, ) = payable(universalOwner).call{value : universalToBalance[num]}(""); 
+        require(success, "it didn't go through");  
+        if (success) {
+            universalToBalance[num] = 0;
+        }
+    }
+
     function setUniversalTax(uint256 num, uint256 amount) public {
         require(msg.sender == ownerOf(universal_to_tokenId[num]), "msg.sender is not the owner of the universal!");
+        // note that universal taxes are set in absolute amounts, not basis points. 
+        require(amount >= 0, "what are you thinking setting a negative tax?");
         universal_to_tax[num] = amount;
     }
 

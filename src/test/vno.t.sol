@@ -1,20 +1,27 @@
+// https://github.com/foundry-rs/forge-std
+
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.10;
 
-import "../../lib/ds-test/src/test.sol";
-import "../../lib/ds-test/src/console.sol";
+import "../../lib/forge-std/src/Test.sol";
+// import "../../lib/ds-test/src/test.sol";
+// import "../../lib/ds-test/src/console.sol";
 // import "../../lib/ds-test/src/cheats.sol";
-import "../vno.sol"; 
+import "../../src/vno.sol"; 
+import "forge-std/Test.sol";
 
 interface CheatCodes {
-    // function prank(address) external;
+    function startPrank(address) external;
+    function prank(address) external;
+    function deal(address who, uint256 newBalance) external;
     function addr(uint256 privateKey) external returns (address);
     function warp(uint256) external;    // Set block.timestamp
 }
 
-contract VNOTest is DSTest {
+contract VNOTest is Test {
     VNO vno;
     CheatCodes cheats = CheatCodes(HEVM_ADDRESS);
+    // HEVM_ADDRESS = 0x7109709ECfa91a80626fF3989D68f67F5b1DD12D
 
     address alice = cheats.addr(1);
     address bob = cheats.addr(2);
@@ -41,148 +48,148 @@ contract VNOTest is DSTest {
     
     
 
-    // function testutfStringLength() public {
-    //     string memory two   = "{{{}}}";
-    //     string memory three = "{{{{}}}}";
-    //     string memory five  = "{{{{{{{}}}}}}}";
-    //     assertEq(vno.utfStringLength(two),6);
-    //     assertEq(vno.utfStringLength(three),8);
-    //     assertEq(vno.utfStringLength(five),14);
-    // }
+    function testutfStringLength() public {
+        string memory two   = "{{{}}}";
+        string memory three = "{{{{}}}}";
+        string memory five  = "{{{{{{{}}}}}}}";
+        assertEq(vno.utfStringLength(two),6);
+        assertEq(vno.utfStringLength(three),8);
+        assertEq(vno.utfStringLength(five),14);
+    }
 
-    // function testPredecessorString() public {
-    //     string memory predE = vno.predecessorString(e);
-    //     string memory predi = vno.predecessorString(i);
-    //     string memory predii = vno.predecessorString(ii);
-    //     console.log("The predecessor of zero should be", e, predE   );
-    //     console.log("The predecessor of one  should be", e,  predi  );
-    //     console.log("The predecessor of two  should be", i,  predii  );
-    //     assertTrue(keccak256(abi.encodePacked(e))==keccak256(abi.encodePacked(predE)));
-    //     // assertTrue(keccak256(abi.encodePacked(e))==keccak256(abi.encodePacked(predi)));
-    //     assertTrue(keccak256(abi.encodePacked(i))==keccak256(abi.encodePacked(predii)));
-    // }
+    function testPredecessorString() public {
+        string memory predE = vno.predecessorString(e);
+        string memory predi = vno.predecessorString(i);
+        string memory predii = vno.predecessorString(ii);
+        console.log("The predecessor of zero should be", e, predE   );
+        console.log("The predecessor of one  should be", e,  predi  );
+        console.log("The predecessor of two  should be", i,  predii  );
+        assertTrue(keccak256(abi.encodePacked(e))==keccak256(abi.encodePacked(predE)));
+        // assertTrue(keccak256(abi.encodePacked(e))==keccak256(abi.encodePacked(predi)));
+        assertTrue(keccak256(abi.encodePacked(i))==keccak256(abi.encodePacked(predii)));
+    }
     
-    // function testIsNestedString() public {
-    //     string memory five                   = "{{{{{{}}}}}}";
-    //     string memory otherGlyphs        = "{1a44}";
-    //     string memory misordered     = "}{}}";
-    //     string memory notequalbrackets     = "{}}";
-    //     string memory asymmetricNestedString = "{{{{{}}}";
-    //     // 
-    //     // (bool isFive                     , uint256 numLfive,                    uint256 numRfive)   = vno.isNestedString(five                  );
-    //     (bool isOtherGlyphs             , uint256 numLOtherGlyphs,              uint256 numROtherGlyphs)                = vno.isNestedString(otherGlyphs                  );
-    //     (bool isMisordered              , uint256 numLmisordered,               uint256 numRmisordered)                 = vno.isNestedString(misordered       );
-    //     (bool isnotequalbrackets        , uint256 numLnotequalbrackets,         uint256 numRnotequalbrackets)           = vno.isNestedString(notequalbrackets    );
-    //     (bool isAsymmetricNestedString  , uint256 numLAsymmetricNestedString,   uint256 numRAsymmetricNestedString)     = vno.isNestedString(asymmetricNestedString);
+    function testIsNestedString() public {
+        string memory five                   = "{{{{{{}}}}}}";
+        string memory otherGlyphs        = "{1a44}";
+        string memory misordered     = "}{}}";
+        string memory notequalbrackets     = "{}}";
+        string memory asymmetricNestedString = "{{{{{}}}";
+        // 
+        // (bool isFive                     , uint256 numLfive,                    uint256 numRfive)   = vno.isNestedString(five                  );
+        (bool isOtherGlyphs             , uint256 numLOtherGlyphs,              uint256 numROtherGlyphs)                = vno.isNestedString(otherGlyphs                  );
+        (bool isMisordered              , uint256 numLmisordered,               uint256 numRmisordered)                 = vno.isNestedString(misordered       );
+        (bool isnotequalbrackets        , uint256 numLnotequalbrackets,         uint256 numRnotequalbrackets)           = vno.isNestedString(notequalbrackets    );
+        (bool isAsymmetricNestedString  , uint256 numLAsymmetricNestedString,   uint256 numRAsymmetricNestedString)     = vno.isNestedString(asymmetricNestedString);
 
-    //     // console.log(isFive, numLfive, numRfive);
-    //     console.log(isOtherGlyphs,              numLOtherGlyphs,            numROtherGlyphs);
-    //     console.log(isMisordered,               numLmisordered,             numRmisordered     );
-    //     console.log(isnotequalbrackets,         numLnotequalbrackets,       numRnotequalbrackets);
-    //     console.log(isAsymmetricNestedString,   numLAsymmetricNestedString, numRAsymmetricNestedString );
+        // console.log(isFive, numLfive, numRfive);
+        console.log(isOtherGlyphs,              numLOtherGlyphs,            numROtherGlyphs);
+        console.log(isMisordered,               numLmisordered,             numRmisordered     );
+        console.log(isnotequalbrackets,         numLnotequalbrackets,       numRnotequalbrackets);
+        console.log(isAsymmetricNestedString,   numLAsymmetricNestedString, numRAsymmetricNestedString );
 
-    //     // assertTrue(isFive                     == true  );
-    //     assertTrue(isOtherGlyphs            == false );
-    //     assertTrue(isMisordered             == false );
-    //     assertTrue(isnotequalbrackets       == false );
-    //     assertTrue(isAsymmetricNestedString == false );
+        // assertTrue(isFive                     == true  );
+        assertTrue(isOtherGlyphs            == false );
+        assertTrue(isMisordered             == false );
+        assertTrue(isnotequalbrackets       == false );
+        assertTrue(isAsymmetricNestedString == false );
 
-    // }
+    }
 
-    // function testAddNestedSets () public {
-    //     string memory emptyset = "{}";
-    //     string memory one = "{{}}";
-    //     string memory two = "{{{}}}";
-    //     string memory three = "{{{{}}}}";
-    //     string memory five  = "{{{{{{}}}}}}";
-    //     // 2 = {{{}}}
-    //     // 3 = {{{{}}}}
-    //     // 5 = {{{{{{{}}}}}}}
+    function testAddNestedSets () public {
+        string memory emptyset = "{}";
+        string memory one = "{{}}";
+        string memory two = "{{{}}}";
+        string memory three = "{{{{}}}}";
+        string memory five  = "{{{{{{}}}}}}";
+        // 2 = {{{}}}
+        // 3 = {{{{}}}}
+        // 5 = {{{{{{{}}}}}}}
 
-    //     string memory ee = vno.addNestedSets(emptyset, emptyset);
-    //     console.log("The string of ee is", ee);
-    //     string memory eo = vno.addNestedSets(emptyset, one);
-    //     string memory oe = vno.addNestedSets(one, emptyset);
-    //     string memory oo = vno.addNestedSets(one, one);
-    //     string memory twothree = vno.addNestedSets(two, three);
+        string memory ee = vno.addNestedSets(emptyset, emptyset);
+        console.log("The string of ee is", ee);
+        string memory eo = vno.addNestedSets(emptyset, one);
+        string memory oe = vno.addNestedSets(one, emptyset);
+        string memory oo = vno.addNestedSets(one, one);
+        string memory twothree = vno.addNestedSets(two, three);
         
-    //     console.log("The string of oo is", oo);
-    //     assertTrue(keccak256(abi.encodePacked(ee))==keccak256(abi.encodePacked(emptyset)));
-    //     assertTrue(keccak256(abi.encodePacked(eo))==keccak256(abi.encodePacked(one)));
-    //     assertTrue(keccak256(abi.encodePacked(oe))==keccak256(abi.encodePacked(one)));
-    //     assertTrue(keccak256(abi.encodePacked(oo))==keccak256(abi.encodePacked(two)));
-    //     console.log("The string of twothree is", twothree);
-    //     console.log("The string of five is", five);
-    //     assertTrue(keccak256(abi.encodePacked(five))==keccak256(abi.encodePacked(twothree)));
-    // }
+        console.log("The string of oo is", oo);
+        assertTrue(keccak256(abi.encodePacked(ee))==keccak256(abi.encodePacked(emptyset)));
+        assertTrue(keccak256(abi.encodePacked(eo))==keccak256(abi.encodePacked(one)));
+        assertTrue(keccak256(abi.encodePacked(oe))==keccak256(abi.encodePacked(one)));
+        assertTrue(keccak256(abi.encodePacked(oo))==keccak256(abi.encodePacked(two)));
+        console.log("The string of twothree is", twothree);
+        console.log("The string of five is", five);
+        assertTrue(keccak256(abi.encodePacked(five))==keccak256(abi.encodePacked(twothree)));
+    }
 
-    // function testMultiplyNestedSets () public {
+    function testMultiplyNestedSets () public {
 
-    //     string memory exi       = vno.multiplyNestedSets(e, i);           // zero multiplied with anything should be 0 should be 0 
-    //     string memory ixi       = vno.multiplyNestedSets(i, i);       // anything multiplied by 1 should be itself.
-    //     string memory iixi      = vno.multiplyNestedSets(ii, i);       // anything multiplied by 1 should be itself.
-    //     string memory iiixe     = vno.multiplyNestedSets(iii, e);       // multiplication by 1 should return self, commutativity test
-    //     string memory exiii     = vno.multiplyNestedSets(e, iii);       // multiplication by 1 should return self, commutativity test
-    //     string memory iixiii    = vno.multiplyNestedSets(ii, iii);     //  commutativity test
-    //     string memory iiixii    = vno.multiplyNestedSets(iii, ii);      //  commutativity test 
+        string memory exi       = vno.multiplyNestedSets(e, i);           // zero multiplied with anything should be 0 should be 0 
+        string memory ixi       = vno.multiplyNestedSets(i, i);       // anything multiplied by 1 should be itself.
+        string memory iixi      = vno.multiplyNestedSets(ii, i);       // anything multiplied by 1 should be itself.
+        string memory iiixe     = vno.multiplyNestedSets(iii, e);       // multiplication by 1 should return self, commutativity test
+        string memory exiii     = vno.multiplyNestedSets(e, iii);       // multiplication by 1 should return self, commutativity test
+        string memory iixiii    = vno.multiplyNestedSets(ii, iii);     //  commutativity test
+        string memory iiixii    = vno.multiplyNestedSets(iii, ii);      //  commutativity test 
 
-    //     console.log("exi    should be", e,  exi   );
-    //     console.log("ixi    should be", i,  ixi   );
-    //     console.log("iixi   should be", ii, iixi  );
-    //     console.log("iiixe  should be", e,  iiixe );
-    //     console.log("exiii  should be", e,  exiii );
-    //     console.log("iixiii should be", vi, iixiii);
-    //     console.log("iiixii should be", iixiii, iiixii);
+        console.log("exi    should be", e,  exi   );
+        console.log("ixi    should be", i,  ixi   );
+        console.log("iixi   should be", ii, iixi  );
+        console.log("iiixe  should be", e,  iiixe );
+        console.log("exiii  should be", e,  exiii );
+        console.log("iixiii should be", vi, iixiii);
+        console.log("iiixii should be", iixiii, iiixii);
 
-    //     assertTrue(keccak256(abi.encodePacked(exi   )) == keccak256(abi.encodePacked(e)));
-    //     assertTrue(keccak256(abi.encodePacked(ixi )) == keccak256(abi.encodePacked(i)));
-    //     assertTrue(keccak256(abi.encodePacked(iixi )) == keccak256(abi.encodePacked(ii)));
-    //     assertTrue(keccak256(abi.encodePacked(iiixe )) == keccak256(abi.encodePacked(e)));
-    //     assertTrue(keccak256(abi.encodePacked(exiii )) == keccak256(abi.encodePacked(e)));
-    //     assertTrue(keccak256(abi.encodePacked(iixiii)) == keccak256(abi.encodePacked(vi))); 
-    //     assertTrue(keccak256(abi.encodePacked(iiixii)) == keccak256(abi.encodePacked(iiixii)));
+        assertTrue(keccak256(abi.encodePacked(exi   )) == keccak256(abi.encodePacked(e)));
+        assertTrue(keccak256(abi.encodePacked(ixi )) == keccak256(abi.encodePacked(i)));
+        assertTrue(keccak256(abi.encodePacked(iixi )) == keccak256(abi.encodePacked(ii)));
+        assertTrue(keccak256(abi.encodePacked(iiixe )) == keccak256(abi.encodePacked(e)));
+        assertTrue(keccak256(abi.encodePacked(exiii )) == keccak256(abi.encodePacked(e)));
+        assertTrue(keccak256(abi.encodePacked(iixiii)) == keccak256(abi.encodePacked(vi))); 
+        assertTrue(keccak256(abi.encodePacked(iiixii)) == keccak256(abi.encodePacked(iiixii)));
 
-    // }
+    }
 
-    // function testSubtractNestedSets () public {
-    //     string memory v = vno.addNestedSets(iii, ii);
-    //     string memory imi       = vno.subtractNestedSets(i, i);       // anything multiplied by 1 should be itself.
-    //     string memory iimi      = vno.subtractNestedSets(ii, i);       // anything multiplied by 1 should be itself.
-    //     string memory iiime     = vno.subtractNestedSets(iii, e);       // multiplication by 1 should return self, commutativity test
-    //     string memory vmiii     = vno.subtractNestedSets(v, iii);       // multiplication by 1 should return self, commutativity test
+    function testSubtractNestedSets () public {
+        string memory v = vno.addNestedSets(iii, ii);
+        string memory imi       = vno.subtractNestedSets(i, i);       // anything multiplied by 1 should be itself.
+        string memory iimi      = vno.subtractNestedSets(ii, i);       // anything multiplied by 1 should be itself.
+        string memory iiime     = vno.subtractNestedSets(iii, e);       // multiplication by 1 should return self, commutativity test
+        string memory vmiii     = vno.subtractNestedSets(v, iii);       // multiplication by 1 should return self, commutativity test
 
-    //     console.log("v should be", "{{{{{{}}}}}}", v);
-    //     console.log("imi    should be", e   ,   imi  );
-    //     console.log("iimi   should be", i   ,   iimi );
-    //     console.log("iiime  should be", iii ,   iiime);
-    //     console.log("vmiii  should be", ii  ,   vmiii);        
+        console.log("v should be", "{{{{{{}}}}}}", v);
+        console.log("imi    should be", e   ,   imi  );
+        console.log("iimi   should be", i   ,   iimi );
+        console.log("iiime  should be", iii ,   iiime);
+        console.log("vmiii  should be", ii  ,   vmiii);        
         
-    //     assertTrue(keccak256(abi.encodePacked("{{{{{{}}}}}}"   ))   == keccak256(abi.encodePacked(v)));
-    //     assertTrue(keccak256(abi.encodePacked(e    ))   == keccak256(abi.encodePacked(imi  )));
-    //     assertTrue(keccak256(abi.encodePacked(i  ))     == keccak256(abi.encodePacked(iimi )));
-    //     assertTrue(keccak256(abi.encodePacked(iii ))    == keccak256(abi.encodePacked(iiime)));
-    //     assertTrue(keccak256(abi.encodePacked(ii  ))    == keccak256(abi.encodePacked(vmiii)));
-    // }
+        assertTrue(keccak256(abi.encodePacked("{{{{{{}}}}}}"   ))   == keccak256(abi.encodePacked(v)));
+        assertTrue(keccak256(abi.encodePacked(e    ))   == keccak256(abi.encodePacked(imi  )));
+        assertTrue(keccak256(abi.encodePacked(i  ))     == keccak256(abi.encodePacked(iimi )));
+        assertTrue(keccak256(abi.encodePacked(iii ))    == keccak256(abi.encodePacked(iiime)));
+        assertTrue(keccak256(abi.encodePacked(ii  ))    == keccak256(abi.encodePacked(vmiii)));
+    }
 
-    // // this is not written yet
-    // function testExponentiateNestedSets () public {
+    // this is not written yet
+    function testExponentiateNestedSets () public {
         
-    //     string memory iEiii                   = vno.exponentiateNestedSets(i, iii);         // one to the power of three is one
-    //     string memory iiEi                    = vno.exponentiateNestedSets(ii, i);        // two the power of one is one
-    //     string memory vEiii                   = vno.exponentiateNestedSets(v, iii);       // five to the power of three is 125
-    //     string memory oneHundredAndTwentyFive = vno.multiplyNestedSets(vno.multiplyNestedSets(v, v), v);
-    //     // string memory iiime     = vno.exponentiateNestedSets(iii, e);       // iiii expect revert
+        string memory iEiii                   = vno.exponentiateNestedSets(i, iii);         // one to the power of three is one
+        string memory iiEi                    = vno.exponentiateNestedSets(ii, i);        // two the power of one is one
+        string memory vEiii                   = vno.exponentiateNestedSets(v, iii);       // five to the power of three is 125
+        string memory oneHundredAndTwentyFive = vno.multiplyNestedSets(vno.multiplyNestedSets(v, v), v);
+        // string memory iiime     = vno.exponentiateNestedSets(iii, e);       // iiii expect revert
 
-    //     console.log("iEiii                   should be", i      ,   iEiii);
-    //     console.log("iiEi                    should be", ii     ,   iiEi);
-    //     console.log("vEiii                   should be", vEiii  ,   oneHundredAndTwentyFive);
-    //     // console.log("oneHundredAndTwentyFive should be", iii ,   iiime);
+        console.log("iEiii                   should be", i      ,   iEiii);
+        console.log("iiEi                    should be", ii     ,   iiEi);
+        console.log("vEiii                   should be", vEiii  ,   oneHundredAndTwentyFive);
+        // console.log("oneHundredAndTwentyFive should be", iii ,   iiime);
         
-    //     assertTrue(keccak256(abi.encodePacked(i   ))   == keccak256(abi.encodePacked(iEiii)));
-    //     assertTrue(keccak256(abi.encodePacked(ii    ))   == keccak256(abi.encodePacked(iiEi  )));
-    //     assertTrue(keccak256(abi.encodePacked(vEiii  ))     == keccak256(abi.encodePacked(oneHundredAndTwentyFive )));
+        assertTrue(keccak256(abi.encodePacked(i   ))   == keccak256(abi.encodePacked(iEiii)));
+        assertTrue(keccak256(abi.encodePacked(ii    ))   == keccak256(abi.encodePacked(iiEi  )));
+        assertTrue(keccak256(abi.encodePacked(vEiii  ))     == keccak256(abi.encodePacked(oneHundredAndTwentyFive )));
 
-    // }
+    }
  
     function testMakeZero() public {
         uint256 early = 1900000000;
@@ -251,8 +258,77 @@ contract VNOTest is DSTest {
         console.log("The nested string of the token Bob owned is", bobNestedString);
     }
 
+     function testHoax() public {
+        // we call `hoax`, which gives the target address
+        // eth and then calls `prank`
+        address moron = address(1337);
+        hoax(moron);
+        uint256 moronBalanceBefore = moron.balance;
+        
+        console.log("The balance of vno was originally:",address(vno).balance);
+        console.log("And the balance of moron was originally:",moronBalanceBefore);
+        vno.payUniversalOwner{value: 100}(2);
 
+        console.log("after moron sent some money to vno, moron has:", moron.balance);
+        console.log("and vno has this amount of money:", address(vno).balance);
+        assertEq(moronBalanceBefore-100, moron.balance);
+        assertEq(100, address(vno).balance);
+        // console.log(moron.balance);
+        // console.log(address(vno).balance);
+
+        // overloaded to allow you to specify how much eth to
+        // initialize the address with
+        hoax(address(1337), 1);
+        // vno.payUniversalOwner{value: 1}(address(1337));
+    }
     
+    function testSendingEther() public {
+        uint256 aliceInitialBalance = 100; 
+        uint256 bobInitialBalance = 0;
+        assertEq(alice.balance, 0);
+        assertEq(bobInitialBalance, 0);
+        cheats.deal(alice, aliceInitialBalance);
+        assertEq(alice.balance, 100);
+        cheats.prank(alice);
+        // (bool sent,) = payable(bob).call{value:100 ether}("");
+        // require(sent, "not sent");
+        // assertEq(alice.balance,0);
+        // assertEq(bob.balance, 100);
+    }
+
+    // function testDeposit() public {
+    //     // https://vomtom.at/solidity-0-6-4-and-call-value-curly-brackets/
+    //     // https://soliditydeveloper.com/foundry
+    //     console.log("originally, dear poor Alice had only:", alice.balance);
+    //     assertEq(alice.balance, 0);
+    //     uint256 gibmoney = 10; 
+    //     console.log("now I'm gibbing money to Alice. The amount is", gibmoney);
+    //     cheats.deal(alice, gibmoney);
+    //     console.log("And now Alice has:", alice.balance);
+    //     assertEq(alice.balance, 10);
+    //     console.log("The original balance of the vno is:", address(vno).balance);
+    //     console.log("the msg.sender now is:", msg.sender);
+    //     uint256 sentMoney = 3;
+    //     console.log("Now alice is sending money to the vno contract. The amount is:", sentMoney);
+    //     console.log("the address of vno is",address(vno));
+    //     cheats.startPrank(alice);
+    //     (bool success, ) = payable(vno).call{value: 3 ether}("");
+    //     console.log("the address of alice is:", alice);
+    //     console.log("the msg.sender now is:", msg.sender);
+        
+
+    //     // console.log(alice);
+    //     // assertEq(msg.sender, alice);
+        
+        
+    //     // (bool success, ) = address(vno).call{value: 3 ether}("");
+    //     console.log(success);
+    //     // payable(alice).call{value: 3 ether}("");
+    //     assertEq(alice.balance, 7);
+    //     console.log("And now alice's balance is:", alice.balance);
+    //     console.log("The balance of the vno is now:", address(vno).balance);
+    //     // assertEq(address(vno).balance, 3);
+    // }    
     // function testMakeOne () public {
     //     string memory emptyset = "{}";
     //     string memory one = "{{}}";
