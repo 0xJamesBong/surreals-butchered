@@ -258,7 +258,156 @@ contract VNOTest is Test {
         console.log("The nested string of the token Bob owned is", bobNestedString);
     }
 
-     function testHoax() public {
+    function testMintSuccessor() public { 
+        
+        hoax(alice);                                // pretend it's alice calling the functions
+        uint256 oldAliceBalance = alice.balance;    // record alice's old balance
+        console.log(oldAliceBalance);
+
+        
+        uint256 zeroTokenId = vno.getCurrentTokenId();  // the current tokenId will be the id of the zeroToke
+        
+        vno.makeZero(alice);                            // make Zero and give it to alice 
+        assertTrue(vno.isUniversal(zeroTokenId)); // check if the zeroTokenId is indeed a Universal
+        
+        assertTrue(vno.ownerOf(zeroTokenId) == alice);                      // check if alice owns the token
+        uint256 oneTokenId = vno.mintSuccessor(alice, zeroTokenId);         // we will be minting the successor of zero, we are now recording the tokenId
+        assertTrue(vno.isUniversal(oneTokenId));                            // given it is the first token to be minted of the number one, it should be a universal
+        assertTrue(vno.ownerOf(oneTokenId) == alice);                       // it should belong to alice
+
+        
+        uint256 anotherOneTokenId = vno.mintSuccessor(alice, zeroTokenId);  // we now mint another token of number One
+        assertTrue(!vno.isUniversal(anotherOneTokenId));                    // it shouldn't be a universal
+        assertTrue(vno.ownerOf(anotherOneTokenId) == alice);                // it should belong to alice
+        uint256 newAliceBalance = alice.balance;                            // since it was minted via the successor function, alice should have paid nothing
+        console.log(newAliceBalance);                       
+        assertEq(oldAliceBalance, newAliceBalance);
+        
+        
+        hoax(bob);                              //now let us pretend bob is calling the functions
+        uint256 oldBobBalance = bob.balance;    // record bob's balance
+        uint256 bobMintOneTokenId = vno.getCurrentTokenId();    // getting the tokenId in which bob minted
+        uint256 bobzerotokenid = vno.makeZero(bob);                                      // for bob to mint the successor of one, he has to mint a zero first
+        uint256 bobOneTokenId = vno.mintSuccessor(bob, bobzerotokenid); // bob mints a successor of one
+        assertTrue(!vno.isUniversal(bobOneTokenId)); // the minted successor of zero should not be a universal 
+        assertTrue(vno.ownerOf(bobOneTokenId)==bob); // bob should be the owner of the token
+        assertTrue(oldBobBalance == bob.balance); // bob's balance should not have been reduced
+    }
+
+    function testDirectMint() public {
+        // To test this, you need to make a lot of numbers first 
+        hoax(alice);
+        uint256 zeroTokenId = vno.makeZero(alice);
+        hoax(alice);
+        uint256 oneTokenId = vno.mintSuccessor(alice, zeroTokenId);
+        hoax(alice);
+        uint256 twoTokenId = vno.mintSuccessor(alice, oneTokenId);
+        uint256 tax = 1000;
+        hoax(alice);
+        vno.setUniversalTax(2, tax);
+        startHoax(bob);
+        uint256 oldBobBalance = bob.balance;
+        uint256 directMintTokenId = vno.directMint(bob, 2);
+        assertTrue(!vno.isUniversal(directMintTokenId));
+        assertTrue(!vno.isUniversal(directMintTokenId));
+        assertEq(oldBobBalance-tax, bob.balance);
+
+    }
+
+
+    function testMintViaAddition() public {
+        // To test this, you need to make a lot of numbers first 
+        hoax(alice);
+        uint256 zeroTokenId = vno.makeZero(alice);
+        uint256 oneTokenId = vno.mintSuccessor(alice, zeroTokenId);
+        uint256 twoTokenId = vno.mintSuccessor(alice, oneTokenId);
+        uint256 threeTokenId = vno.mintByAddition(alice, oneTokenId, twoTokenId);        // minting by addition
+        uint256 anotherThreeTokenId = vno.mintByAddition(alice, twoTokenId, oneTokenId); // this is possible because both one and two should be universals 
+        assertTrue(vno.isUniversal(oneTokenId));
+        assertTrue(vno.isUniversal(twoTokenId));        
+        assertTrue(vno.isUniversal(threeTokenId));
+        assertTrue(!vno.isUniversal(anotherThreeTokenId));
+                
+            
+        assertEq(vno.getNumberFromTokenId(threeTokenId),
+                 vno.getNumberFromTokenId(anotherThreeTokenId)
+                );
+        
+        hoax(bob);
+
+        
+    }
+
+    function testMintViaMultiplication()    public {
+        // To test this, you need to make a lot of numbers first 
+        hoax(alice);
+        uint256 zeroTokenId = vno.makeZero(alice);
+        uint256 oneTokenId = vno.mintSuccessor(alice, zeroTokenId);
+        uint256 twoTokenId = vno.mintSuccessor(alice, oneTokenId);
+    }
+
+    function testMintViaExponentiation() public {
+
+    }
+
+    function testMintViaSubtraction() public {
+
+
+    }
+
+    function testPayUniversalOwner() public {
+        hoax(alice);
+        uint256 zeroTokenId = vno.makeZero(alice);
+        hoax(alice);
+        uint256 oneTokenId = vno.mintSuccessor(alice, zeroTokenId);
+        hoax(alice);
+        uint256 twoTokenId = vno.mintSuccessor(alice, oneTokenId);
+        uint256 tax = 1000;
+        hoax(alice);
+        vno.setUniversalTax(2, tax);
+        hoax(bob);
+        vno.payUniversalOwner(2);
+    }
+
+
+    // https://github.com/foundry-rs/forge-std
+
+    // function testHoax() public {
+    //     // we call `hoax`, which gives the target address
+    //     // eth and then calls `prank`
+    //     address moron = address(1337);
+    //     hoax(moron);
+    //     uint256 moronBalanceBefore = moron.balance;
+        
+    //     console.log("The balance of vno was originally:",address(vno).balance);
+    //     console.log("And the balance of moron was originally:",moronBalanceBefore);
+    //     vno.payUniversalOwner{value: 100}(2);
+    //     // payable(address(vno)).payUniversalOwner{value: 100}(2);
+
+    //     console.log("after moron sent some money to vno, moron has:", moron.balance);
+    //     console.log("and vno has this amount of money:", address(vno).balance);
+    //     assertEq(moronBalanceBefore-100, moron.balance);
+    //     assertEq(100, address(vno).balance);
+    //     // console.log(moron.balance);
+    //     // console.log(address(vno).balance);
+
+    //     // overloaded to allow you to specify how much eth to
+    //     // initialize the address with
+    //     hoax(address(1337), 1);
+    //     // vno.payUniversalOwner{value: 1}(address(1337));
+    // }
+
+    function testHoax() public {
+        address moron = address(1337);
+        hoax(moron);
+        uint256 moronBalanceBefore = moron.balance;
+        console.log("The balance of vno was originally:",address(vno).balance);
+        console.log("And the balance of moron was originally:",moronBalanceBefore);
+        vno.payHoax{value: 100}();
+
+    }
+// https://vomtom.at/solidity-0-6-4-and-call-value-curly-brackets/
+    function testBar() public {
         // we call `hoax`, which gives the target address
         // eth and then calls `prank`
         address moron = address(1337);
@@ -267,7 +416,7 @@ contract VNOTest is Test {
         
         console.log("The balance of vno was originally:",address(vno).balance);
         console.log("And the balance of moron was originally:",moronBalanceBefore);
-        vno.payUniversalOwner{value: 100}(2);
+        vno.bar{value: 100}(moron);
 
         console.log("after moron sent some money to vno, moron has:", moron.balance);
         console.log("and vno has this amount of money:", address(vno).balance);
@@ -279,22 +428,48 @@ contract VNOTest is Test {
         // overloaded to allow you to specify how much eth to
         // initialize the address with
         hoax(address(1337), 1);
-        // vno.payUniversalOwner{value: 1}(address(1337));
+        bool success = vno.bar{value: 1}(address(1337));
+        console.log(success);
+    }
+
+    function testSendViaCall() public {
+        // we call `hoax`, which gives the target address
+        // eth and then calls `prank`
+        address moron = address(1337);
+        hoax(moron);
+        uint256 moronBalanceBefore = moron.balance;
+        
+        console.log("The balance of vno was originally:",address(vno).balance);
+        console.log("And the balance of moron was originally:",moronBalanceBefore);
+        vno.bar{value: 100}(moron);
+
+        console.log("after moron sent some money to vno, moron has:", moron.balance);
+        console.log("and vno has this amount of money:", address(vno).balance);
+        assertEq(moronBalanceBefore-100, moron.balance);
+        assertEq(100, address(vno).balance);
+        // console.log(moron.balance);
+        // console.log(address(vno).balance);
+
+        // overloaded to allow you to specify how much eth to
+        // initialize the address with
+        hoax(address(1337), 1);
+        bool success = vno.sendViaCall{value: 1}();
+        console.log(success);
     }
     
-    function testSendingEther() public {
-        uint256 aliceInitialBalance = 100; 
-        uint256 bobInitialBalance = 0;
-        assertEq(alice.balance, 0);
-        assertEq(bobInitialBalance, 0);
-        cheats.deal(alice, aliceInitialBalance);
-        assertEq(alice.balance, 100);
-        cheats.prank(alice);
-        // (bool sent,) = payable(bob).call{value:100 ether}("");
-        // require(sent, "not sent");
-        // assertEq(alice.balance,0);
-        // assertEq(bob.balance, 100);
-    }
+    // function testSendingEther() public {
+    //     uint256 aliceInitialBalance = 100; 
+    //     uint256 bobInitialBalance = 0;
+    //     assertEq(alice.balance, 0);
+    //     assertEq(bobInitialBalance, 0);
+    //     cheats.deal(alice, aliceInitialBalance);
+    //     assertEq(alice.balance, 100);
+    //     cheats.prank(alice);
+    //     (bool sent,) = payable(bob).call{value:100 ether}("");
+    //     require(sent, "not sent");
+    //     assertEq(alice.balance,0);
+    //     assertEq(bob.balance, 100);
+    // }
 
     // function testDeposit() public {
     //     // https://vomtom.at/solidity-0-6-4-and-call-value-curly-brackets/
@@ -328,7 +503,8 @@ contract VNOTest is Test {
     //     console.log("And now alice's balance is:", alice.balance);
     //     console.log("The balance of the vno is now:", address(vno).balance);
     //     // assertEq(address(vno).balance, 3);
-    // }    
+    // }   
+
     // function testMakeOne () public {
     //     string memory emptyset = "{}";
     //     string memory one = "{{}}";

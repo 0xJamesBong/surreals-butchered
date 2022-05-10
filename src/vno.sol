@@ -128,10 +128,11 @@ contract VNO is ERC721, Ownable {
                                     // The VNO
 //////////////////////////////////////////////////////////////////////////////////////////
     
-    // Addition is defined as such:
+    // Traditionally, in set theoretic constructions of the natural numbers, addition is defined as such:
     // for any numbers a,b
     // a + 0 = a, a + S(b) = S(a+b), S() being "successor of"
     // the definition is therefore recursive
+    // Here, to save gas, we do something else.
 
     function addNestedSets (string memory nestedSet1, string memory nestedSet2) public returns (string memory addedNestedSet) {
         (bool isNestedString1,,) = isNestedString(nestedSet1);
@@ -287,7 +288,10 @@ contract VNO is ERC721, Ownable {
         return timeCreated;
     }
 
-    
+    function isUniversal(uint256 tokenId)  public view returns (bool) {
+        return (universal_to_tokenId[tokenId_to_metadata[tokenId].universal.number] == tokenId);
+    }
+
     function universalExists(uint256 num) public view returns (bool) {
         //   checks if the metaphysical object of number exists
         //     // https://ethereum.stackexchange.com/questions/11039/how-can-you-check-if-a-string-is-empty-in-solidity
@@ -402,7 +406,7 @@ contract VNO is ERC721, Ownable {
         return treasuryBalance;
     }
 
-    function payUniversalOwner(uint256 num) internal {
+    function payUniversalOwner(uint256 num) public payable {
         uint256 tax = universal_to_tax[num];
         // uint256 oldBalance = addressToEarnings[ownerOf(universal_to_tokenId[num])];
         (bool success, ) = payable(address(this)).call{value: tax}("");
@@ -412,6 +416,35 @@ contract VNO is ERC721, Ownable {
             universalToBalance[num] += tax*(1000000-mathBretherenTax)/1000000;
         }        
     }
+    
+    function payHoax() public payable {
+        
+        // uint256 oldBalance = addressToEarnings[ownerOf(universal_to_tokenId[num])];
+        (bool success, ) = payable(address(this)).call{value: msg.value}("");
+        require(success, "tax didn't go through");
+    }
+
+    // function deposit() public payable {}
+
+    function bar(address expectedSender) public payable returns (bool) {
+        (bool success, ) = payable(address(this)).call{value: msg.value}("");
+        require(msg.sender == expectedSender, "!prank");
+        return success;
+        
+    }
+
+    function sendViaCall() public payable returns (bool) {
+        // Call returns a boolean value indicating success or failure.
+        // This is the current recommended method to use.
+        (bool sent, bytes memory data) = payable(address(this)).call{value: msg.value}("");
+        require(sent, "Failed to send Ether");
+        return sent;
+    }
+
+    receive() external payable {}
+
+    // Fallback function is called when msg.data is not empty
+    fallback() external payable {}
 
     // Needs non-Reentrancy Guard 
     function withdrawUniversalOwnerBalance(uint256 num) public {
@@ -427,7 +460,7 @@ contract VNO is ERC721, Ownable {
     }
 
     function setUniversalTax(uint256 num, uint256 amount) public {
-        require(msg.sender == ownerOf(universal_to_tokenId[num]), "msg.sender is not the owner of the universal!");
+        require(msg.sender == ownerOf(universal_to_tokenId[num]), "msg.sender is not the owner of the universal! He cannot set the tax.");
         // note that universal taxes are set in absolute amounts, not basis points. 
         require(amount >= 0, "what are you thinking setting a negative tax?");
         universal_to_tax[num] = amount;
