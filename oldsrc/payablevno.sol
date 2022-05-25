@@ -405,12 +405,8 @@ contract VNO is ERC721, Ownable {
     function viewTreasuryBalance() public view returns (uint256 treasuryBalance) {
         return treasuryBalance;
     }
-    
-    //  if there is no fallback function, no payable function will work
-    fallback() external payable {}
 
     function payUniversalOwner(uint256 num) public payable {
-        
         uint256 tax = universal_to_tax[num];
         // uint256 oldBalance = addressToEarnings[ownerOf(universal_to_tokenId[num])];
         (bool success, ) = payable(address(this)).call{value: tax}("");
@@ -421,46 +417,47 @@ contract VNO is ERC721, Ownable {
         }        
     }
     
-    // function payHoax() public payable {
+    function payHoax() public payable {
         
-    //     // uint256 oldBalance = addressToEarnings[ownerOf(universal_to_tokenId[num])];
-    //     (bool success, ) = payable(address(this)).call{value: msg.value}("");
-    //     require(success, "tax didn't go through");
-    // }
+        // uint256 oldBalance = addressToEarnings[ownerOf(universal_to_tokenId[num])];
+        (bool success, ) = payable(address(this)).call{value: msg.value}("");
+        require(success, "tax didn't go through");
+    }
+
+    // function deposit() public payable {}
 
     function bar(address expectedSender) public payable returns (bool) {
-        (bool success, ) = payable(address(this)).call{value: 100}("");
-        // (bool success, ) = payable(address(this)).call{value: msg.value}("");
+        (bool success, ) = payable(address(this)).call{value: msg.value}("");
         require(msg.sender == expectedSender, "!prank");
         return success;
         
     }
 
-    // function sendViaCall() public payable returns(bool) {
-    //     // Call returns a boolean value indicating success or failure.
-    //     // This is the current recommended method to use.
-    //     (bool sent, bytes memory data) = payable(address(this)).call{value: msg.value}("");
-    //     require(sent, "Failed to send Ether");
-    //     return sent;
-    // }
+    function sendViaCall() public payable returns (bool) {
+        // Call returns a boolean value indicating success or failure.
+        // This is the current recommended method to use.
+        (bool sent, bytes memory data) = payable(address(this)).call{value: msg.value}("");
+        require(sent, "Failed to send Ether");
+        return sent;
+    }
 
-    
+    receive() external payable {}
 
     // Fallback function is called when msg.data is not empty
-    
+    fallback() external payable {}
 
-    // // Needs non-Reentrancy Guard 
-    // function withdrawUniversalOwnerBalance(uint256 num) public {
-    //     address universalOwner = ownerOf(universal_to_tokenId[num]);
-    //     require(msg.sender == universalOwner, "you don't own this Universal!");
-    //     require(universalToBalance[num] > 0, "there's no money for you withdraw!");
+    // Needs non-Reentrancy Guard 
+    function withdrawUniversalOwnerBalance(uint256 num) public {
+        address universalOwner = ownerOf(universal_to_tokenId[num]);
+        require(msg.sender == universalOwner, "you don't own this Universal!");
+        require(universalToBalance[num] > 0, "there's no money for you withdraw!");
 
-    //     (bool success, ) = payable(universalOwner).call{value : universalToBalance[num]}(""); 
-    //     require(success, "it didn't go through");  
-    //     if (success) {
-    //         universalToBalance[num] = 0;
-    //     }
-    // }
+        (bool success, ) = payable(universalOwner).call{value : universalToBalance[num]}(""); 
+        require(success, "it didn't go through");  
+        if (success) {
+            universalToBalance[num] = 0;
+        }
+    }
 
     function setUniversalTax(uint256 num, uint256 amount) public {
         require(msg.sender == ownerOf(universal_to_tokenId[num]), "msg.sender is not the owner of the universal! He cannot set the tax.");

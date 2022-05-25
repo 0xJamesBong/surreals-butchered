@@ -355,7 +355,6 @@ contract VNOTest is Test {
 
     }
 
-    
     function testPayUniversalOwner() public {
         hoax(alice);
         uint256 zeroTokenId = vno.makeZero(alice);
@@ -366,79 +365,14 @@ contract VNOTest is Test {
         uint256 tax = 1000;
         hoax(alice);
         vno.setUniversalTax(2, tax);
-        startHoax(bob, 10000);
-        uint256 oldBobBalance = bob.balance;
-        console.log("bob's balance is:",oldBobBalance);
-        vno.payUniversalOwner{value:1000}(2);
-        assertEq(bob.balance, oldBobBalance-tax);
+        hoax(bob);
+        vno.payUniversalOwner(2);
     }
 
 
     // https://github.com/foundry-rs/forge-std
 
-    function testHoax() public {
-        // we call `hoax`, which gives the target address
-        // eth and then calls `prank`
-        address moron = address(1337);
-        hoax(moron);
-        uint256 moronBalanceBefore = moron.balance;
-        
-        console.log("The balance of vno was originally:",address(vno).balance);
-        console.log("And the balance of moron was originally:",moronBalanceBefore);
-        vno.payUniversalOwner{value: 100}(2);
-        // payable(address(vno)).payUniversalOwner{value: 100}(2);
-
-        console.log("after moron sent some money to vno, moron has:", moron.balance);
-        console.log("and vno has this amount of money:", address(vno).balance);
-        assertEq(moronBalanceBefore-100, moron.balance);
-        assertEq(100, address(vno).balance);
-        // console.log(moron.balance);
-        // console.log(address(vno).balance);
-
-        // overloaded to allow you to specify how much eth to
-        // initialize the address with
-        hoax(address(1337), 1);
-        // vno.payUniversalOwner{value: 1}(address(1337));
-    }
-
     // function testHoax() public {
-    //     address moron = address(1337);
-    //     hoax(moron);
-    //     uint256 moronBalanceBefore = moron.balance;
-    //     console.log("The balance of vno was originally:",address(vno).balance);
-    //     console.log("And the balance of moron was originally:",moronBalanceBefore);
-    //     vno.payHoax{value: 100}();
-
-    // }
-// https://vomtom.at/solidity-0-6-4-and-call-value-curly-brackets/
-    function testBar() public {
-        // we call `hoax`, which gives the target address
-        // eth and then calls `prank`
-        address moron = address(1337);
-        hoax(moron);
-        uint256 moronBalanceBefore = moron.balance;
-        
-        console.log("The balance of vno was originally:",address(vno).balance);
-        console.log("And the balance of moron was originally:",moronBalanceBefore);
-        // vno.bar(moron);
-        vno.bar{value: 100}(moron);
-
-        console.log("after moron sent some money to vno, moron has:", moron.balance);
-        console.log("and vno has this amount of money:", address(vno).balance);
-        assertEq(moronBalanceBefore-100, moron.balance);
-        assertEq(100, address(vno).balance);
-        // console.log(moron.balance);
-        console.log(address(vno).balance);
-// 
-        // overloaded to allow you to specify how much eth to
-        // initialize the address with
-        hoax(address(1337), 1);
-        bool success = vno.bar{value: 1}(address(1337));
-        // 
-        console.log(success);
-    }
-
-    // function testSendViaCall() public {
     //     // we call `hoax`, which gives the target address
     //     // eth and then calls `prank`
     //     address moron = address(1337);
@@ -447,7 +381,8 @@ contract VNOTest is Test {
         
     //     console.log("The balance of vno was originally:",address(vno).balance);
     //     console.log("And the balance of moron was originally:",moronBalanceBefore);
-    //     vno.bar{value: 100}(moron);
+    //     vno.payUniversalOwner{value: 100}(2);
+    //     // payable(address(vno)).payUniversalOwner{value: 100}(2);
 
     //     console.log("after moron sent some money to vno, moron has:", moron.balance);
     //     console.log("and vno has this amount of money:", address(vno).balance);
@@ -459,9 +394,68 @@ contract VNOTest is Test {
     //     // overloaded to allow you to specify how much eth to
     //     // initialize the address with
     //     hoax(address(1337), 1);
-    //     bool success = vno.sendViaCall{value: 1}();
-    //     console.log(success);
+    //     // vno.payUniversalOwner{value: 1}(address(1337));
     // }
+
+    function testHoax() public {
+        address moron = address(1337);
+        hoax(moron);
+        uint256 moronBalanceBefore = moron.balance;
+        console.log("The balance of vno was originally:",address(vno).balance);
+        console.log("And the balance of moron was originally:",moronBalanceBefore);
+        vno.payHoax{value: 100}();
+
+    }
+// https://vomtom.at/solidity-0-6-4-and-call-value-curly-brackets/
+    function testBar() public {
+        // we call `hoax`, which gives the target address
+        // eth and then calls `prank`
+        address moron = address(1337);
+        hoax(moron);
+        uint256 moronBalanceBefore = moron.balance;
+        
+        console.log("The balance of vno was originally:",address(vno).balance);
+        console.log("And the balance of moron was originally:",moronBalanceBefore);
+        vno.bar{value: 100}(moron);
+
+        console.log("after moron sent some money to vno, moron has:", moron.balance);
+        console.log("and vno has this amount of money:", address(vno).balance);
+        assertEq(moronBalanceBefore-100, moron.balance);
+        assertEq(100, address(vno).balance);
+        // console.log(moron.balance);
+        // console.log(address(vno).balance);
+
+        // overloaded to allow you to specify how much eth to
+        // initialize the address with
+        hoax(address(1337), 1);
+        bool success = vno.bar{value: 1}(address(1337));
+        console.log(success);
+    }
+
+    function testSendViaCall() public {
+        // we call `hoax`, which gives the target address
+        // eth and then calls `prank`
+        address moron = address(1337);
+        hoax(moron);
+        uint256 moronBalanceBefore = moron.balance;
+        
+        console.log("The balance of vno was originally:",address(vno).balance);
+        console.log("And the balance of moron was originally:",moronBalanceBefore);
+        vno.bar{value: 100}(moron);
+
+        console.log("after moron sent some money to vno, moron has:", moron.balance);
+        console.log("and vno has this amount of money:", address(vno).balance);
+        assertEq(moronBalanceBefore-100, moron.balance);
+        assertEq(100, address(vno).balance);
+        // console.log(moron.balance);
+        // console.log(address(vno).balance);
+
+        // overloaded to allow you to specify how much eth to
+        // initialize the address with
+        hoax(address(1337), 1);
+        bool success = vno.sendViaCall{value: 1}();
+        console.log(success);
+    }
     
     // function testSendingEther() public {
     //     uint256 aliceInitialBalance = 100; 
