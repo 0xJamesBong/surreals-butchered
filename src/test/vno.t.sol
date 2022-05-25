@@ -307,7 +307,7 @@ contract VNOTest is Test {
         vno.setUniversalTax(2, tax);
         startHoax(bob);
         uint256 oldBobBalance = bob.balance;
-        uint256 directMintTokenId = vno.directMint(bob, 2);
+        uint256 directMintTokenId = vno.directMint{value:1000}(bob, 2);
         assertTrue(!vno.isUniversal(directMintTokenId));
         assertTrue(!vno.isUniversal(directMintTokenId));
         assertEq(oldBobBalance-tax, bob.balance);

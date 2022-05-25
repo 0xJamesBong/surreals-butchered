@@ -544,8 +544,8 @@ contract VNO is ERC721, Ownable {
         return newTokenId;
     }
 
-    // 
-    function directMint(address maker, uint256 num) public returns (uint256 newTokenId) {
+    
+    function directMint(address maker, uint256 num) public payable returns (uint256 newTokenId) {
 
         require(universalExists(num) == true, "the universal of the predecessor has not been made yet");
         uint256 newTokenId = _tokenIdCounter.current();
@@ -555,14 +555,20 @@ contract VNO is ERC721, Ownable {
         uint256 mintTime = Time();
         tokenId_to_metadata[newTokenId] = Metadata(num_to_universal[num], mintTime, order);
         
+        uint256 tax = universal_to_tax[num];
+
         if (maker != ownerOf(universal_to_tokenId[num])) {
-            payUniversalOwner(num);
+            (bool success, ) = payable(address(this)).call{value: tax}("");
+            require(success, "tax didn't go through");
+            if (success) {
+            // recall that universal taxes are set as whole numbers, not percentages
+            universalToBalance[num] += tax*(1000000-mathBretherenTax)/1000000;
+            _tokenIdCounter.increment();
+        
+            _safeMint(maker, newTokenId);
+            return newTokenId;
+        }        
         }
-        
-        _tokenIdCounter.increment();
-        
-        _safeMint(maker, newTokenId);
-        return newTokenId;
     }
 
     function mintByAddition(address maker, uint256 oldTokenId1, uint256 oldTokenId2) public returns (uint256 newTokenId) {
