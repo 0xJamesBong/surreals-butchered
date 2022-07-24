@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.2;
 
+
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
@@ -8,14 +9,19 @@ import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 // import "../lib/forge-std/lib/ds-test/src/console.sol";
 import "../lib/forge-std/src/console.sol";
 
-contract VNO is ERC721, Ownable {
+import "./bitpackedmap.sol";
+
+
+
+contract VNO is ERC721, Ownable, BitPackedMap {
     using Counters for Counters.Counter;
 
     Counters.Counter private _tokenIdCounter;
 
     constructor() ERC721("Number", "Num") {}
 
- 
+    
+    
     //////////////////////////////////////////////////////////////////////////////////////////
                                     // String Manipulations
     //////////////////////////////////////////////////////////////////////////////////////////
@@ -47,7 +53,6 @@ contract VNO is ERC721, Ownable {
             else
                 //For safety
                 i+=1;
-
             length++;
         }
     }
@@ -300,10 +305,6 @@ contract VNO is ERC721, Ownable {
         // if it is zero then you know that myMapping[key] doesn't yet exist
         return (tempNestedSet.length != 0);
         
-        // if(tempNestedSet.length != 0) {
-            // return true;
-        // } 
-        // return false;
     }
 
     
@@ -378,6 +379,14 @@ contract VNO is ERC721, Ownable {
         return universalBalance;
     }
 
+    function draw(uint256 tokenId) public returns (string memory svg) {
+        Universal memory num = tokenId_to_metadata[tokenId].universal;
+
+        string memory nestedString = num.nestedString;
+        bytes32 bitmap = keccak256(abi.encodePacked(nestedString));
+        svg = _renderSvg(bitmap);
+        return svg;
+    }
 
     function setTreasuryTax(uint256 bp) public onlyOwner () {
         // the Math Bretheren Tax applies to all Universal Owners
@@ -436,13 +445,13 @@ contract VNO is ERC721, Ownable {
         
     }
 
-    // function sendViaCall() public payable returns(bool) {
-    //     // Call returns a boolean value indicating success or failure.
-    //     // This is the current recommended method to use.
-    //     (bool sent, bytes memory data) = payable(address(this)).call{value: msg.value}("");
-    //     require(sent, "Failed to send Ether");
-    //     return sent;
-    // }
+    function sendViaCall() public payable returns(bool) {
+        // Call returns a boolean value indicating success or failure.
+        // This is the current recommended method to use.
+        (bool sent, bytes memory data) = payable(address(this)).call{value: msg.value}("");
+        require(sent, "Failed to send Ether");
+        return sent;
+    }
 
     
 
@@ -462,6 +471,8 @@ contract VNO is ERC721, Ownable {
     //     }
     // }
 
+
+
     function setUniversalTax(uint256 num, uint256 amount) public {
         require(msg.sender == ownerOf(universal_to_tokenId[num]), "msg.sender is not the owner of the universal! He cannot set the tax.");
         // note that universal taxes are set in absolute amounts, not basis points. 
@@ -469,50 +480,15 @@ contract VNO is ERC721, Ownable {
         universal_to_tax[num] = amount;
     }
 
-    function makeZero(address maker) public returns (uint256 tokenId) {
-        // checks if num is new, if new, increases its order to 1 (first!)
-        // if not new, does nothing and goes straight next
-        uint256 tokenId = _tokenIdCounter.current();
-        if (!universalExists(0)) {
-        // you can also use the following line to check if the number exists 
-        // if ( nestedString_to_universal[emptyset].order == 0 ) {
-            Universal storage x = num_to_universal[0];
-            x.nestedString = emptyset;
-            x.number = nestedStringToNum(emptyset);
-            x.instances = 1;
-            // nestedString_to_universal[emptyset].instances = 1;
-            // uint256 order = nestedString_to_universal[emptyset].instances;
-            uint256 order = 1;
-            uint256 mintTime = Time();
-            tokenId_to_metadata[tokenId] = Metadata(x, mintTime, order);
-            universal_to_tokenId[0] = tokenId; 
-        } else {
-            uint256 instances = getInstances(0);    
-            num_to_universal[0].instances = instances + 1;    
-            uint256 order = instances + 1; 
-            uint256 mintTime = Time();
-            tokenId_to_metadata[tokenId] = Metadata(num_to_universal[0], mintTime, order);
-        }
-        _tokenIdCounter.increment();
-        // 
-        _safeMint(maker, tokenId);
-        return tokenId;
+    function makeZero(address maker) public returns (uint256 newTokenId) {
+        
+        uint256 newTokenId = mintNumber(maker, 0, emptyset);
+        
+        return newTokenId;
     }
 
-
-    function mintSuccessor(address maker, uint256 oldTokenId) public returns (uint256 newTokenId) {
-        // checks if num is new, if new, increases its order to 1 (first!)
-        // if not new, does nothing and goes straight next
-        uint256 currentNum = tokenId_to_metadata[oldTokenId].universal.number;
-        uint256 targetNum = currentNum + 1;
-
-        require(universalExists(currentNum) == true, "the universal of the predecessor has not been made yet");
-        require(ownerOf(oldTokenId) == maker, "you don't own the token you're making the successor of");
-        
+    function mintNumber(address maker, uint256 targetNum, string memory targetNumNestedString) internal returns (uint256 newTokenId) {
         uint256 newTokenId = _tokenIdCounter.current();
-        
-        string memory targetNumNestedString = successorString(tokenId_to_metadata[oldTokenId].universal.nestedString);
-
         if (!universalExists(targetNum)) {
         // you can also use the following line to check if the number exists 
         // if ( nestedString_to_universal[emptyset].order == 0 ) {
@@ -538,9 +514,27 @@ contract VNO is ERC721, Ownable {
             // }
         }
         
-        _tokenIdCounter.increment();
-        
         _safeMint(maker, newTokenId);
+        _tokenIdCounter.increment();
+
+        
+
+        return newTokenId;
+    }
+
+    function mintSuccessor(address maker, uint256 oldTokenId) public returns (uint256 newTokenId) {
+        // checks if num is new, if new, increases its order to 1 (first!)
+        // if not new, does nothing and goes straight next
+        uint256 currentNum = tokenId_to_metadata[oldTokenId].universal.number;
+        uint256 targetNum = currentNum + 1;
+
+        require(universalExists(currentNum) == true, "the universal of the predecessor has not been made yet");
+        require(ownerOf(oldTokenId) == maker, "you don't own the token you're making the successor of");
+        
+        string memory targetNumNestedString = successorString(tokenId_to_metadata[oldTokenId].universal.nestedString);
+
+        uint256 newTokenId = mintNumber(maker, targetNum, targetNumNestedString);
+        
         return newTokenId;
     }
 
@@ -558,6 +552,7 @@ contract VNO is ERC721, Ownable {
         uint256 tax = universal_to_tax[num];
 
         if (maker != ownerOf(universal_to_tokenId[num])) {
+            
             (bool success, ) = payable(address(this)).call{value: tax}("");
             require(success, "tax didn't go through");
             if (success) {
@@ -567,7 +562,7 @@ contract VNO is ERC721, Ownable {
         
             _safeMint(maker, newTokenId);
             return newTokenId;
-        }        
+            }        
         }
     }
 
@@ -580,42 +575,12 @@ contract VNO is ERC721, Ownable {
         require(((universalExists(num1) == true) && (universalExists(num2) == true)), "the universals of the constituents don't exist has not been made yet");
         require(((ownerOf(oldTokenId1) == maker) && (ownerOf(oldTokenId2) == maker)), "you don't own the tokens you're adding");
         
-        uint256 newTokenId = _tokenIdCounter.current();
+        // uint256 newTokenId = _tokenIdCounter.current();
         
         string memory targetNumNestedString = addNestedSets(tokenId_to_metadata[oldTokenId1].universal.nestedString, tokenId_to_metadata[oldTokenId2].universal.nestedString);
+        uint256 newTokenId = mintNumber(maker, targetNum, targetNumNestedString);
 
-        if (!universalExists(targetNum)) {
-        // you can also use the following line to check if the number exists 
-        // if ( nestedString_to_universal[emptyset].order == 0 ) {
-            Universal storage x = num_to_universal[targetNum];
-            x.nestedString = targetNumNestedString;
-            x.number = targetNum;
-            x.instances = 1;
-            uint256 order = 1;
-            uint256 mintTime = Time();
-            tokenId_to_metadata[newTokenId] = Metadata(x, mintTime, order);
-            universal_to_tokenId[targetNum] = newTokenId; 
-        } else {
-            uint256 instances = getInstances(targetNum);    
-            num_to_universal[targetNum].instances = instances + 1;    
-            uint256 order = instances + 1; 
-            uint256 mintTime = Time();
-            tokenId_to_metadata[newTokenId] = Metadata(num_to_universal[targetNum], mintTime, order);
-            
-            // if the token used to make the successor is not a universal, we will burn it. 
-            
-            if (universal_to_tokenId[num1] != oldTokenId1 ) {
-                _burn(oldTokenId1);
-            }
-
-            if (universal_to_tokenId[num2] != oldTokenId2 ) {
-                _burn(oldTokenId2);
-            }
-            
-        }
-        _tokenIdCounter.increment();
         
-        _safeMint(maker, newTokenId);
         return newTokenId;
     }
 
@@ -629,39 +594,12 @@ contract VNO is ERC721, Ownable {
         require(((universalExists(num1) == true) && (universalExists(num2) == true)), "the universals of the constituents don't exist has not been made yet");
         require(((ownerOf(oldTokenId1) == maker) && (ownerOf(oldTokenId2) == maker)), "you don't own the tokens you're adding");
         
-        uint256 newTokenId = _tokenIdCounter.current();
+        // uint256 newTokenId = _tokenIdCounter.current();
         
         string memory targetNumNestedString = multiplyNestedSets(tokenId_to_metadata[oldTokenId1].universal.nestedString, tokenId_to_metadata[oldTokenId2].universal.nestedString);
+        uint256 newTokenId = mintNumber(maker, targetNum, targetNumNestedString);
 
-        if (!universalExists(targetNum)) {
-            Universal storage x = num_to_universal[targetNum];
-            x.nestedString = targetNumNestedString;
-            x.number = targetNum;
-            x.instances = 1;
-            uint256 order = 1;
-            uint256 mintTime = Time();
-            tokenId_to_metadata[newTokenId] = Metadata(x, mintTime, order);
-            universal_to_tokenId[targetNum] = newTokenId; 
-        } else {
-            uint256 instances = getInstances(targetNum);    
-            num_to_universal[targetNum].instances = instances + 1;    
-            uint256 order = instances + 1; 
-            uint256 mintTime = Time();
-            tokenId_to_metadata[newTokenId] = Metadata(num_to_universal[targetNum], mintTime, order);
-            
-            // if the token used to make the successor is not a universal, we will burn it. 
-            
-            if (universal_to_tokenId[num1] != oldTokenId1 ) {
-                _burn(oldTokenId1);
-            }
-
-            if (universal_to_tokenId[num2] != oldTokenId2 ) {
-                _burn(oldTokenId2);
-            }
-        }
-        _tokenIdCounter.increment();
         
-        _safeMint(maker, newTokenId);
         return newTokenId;
     }
 
@@ -675,40 +613,12 @@ contract VNO is ERC721, Ownable {
         require(((universalExists(num1) == true) && (universalExists(num2) == true)), "the universals of the constituents don't exist has not been made yet");
         require(((ownerOf(oldTokenId1) == maker) && (ownerOf(oldTokenId2) == maker)), "you don't own the tokens you're adding");
         
-        uint256 newTokenId = _tokenIdCounter.current();
+        // uint256 newTokenId = _tokenIdCounter.current();
         
         string memory targetNumNestedString = exponentiateNestedSets(tokenId_to_metadata[oldTokenId1].universal.nestedString, tokenId_to_metadata[oldTokenId2].universal.nestedString);
+        uint256 newTokenId = mintNumber(maker, targetNum, targetNumNestedString);
 
-        if (!universalExists(targetNum)) {
-            Universal storage x = num_to_universal[targetNum];
-            x.nestedString = targetNumNestedString;
-            x.number = targetNum;
-            x.instances = 1;
-            uint256 order = 1;
-            uint256 mintTime = Time();
-            tokenId_to_metadata[newTokenId] = Metadata(x, mintTime, order);
-            universal_to_tokenId[targetNum] = newTokenId; 
-        } else {
-            uint256 instances = getInstances(targetNum);    
-            num_to_universal[targetNum].instances = instances + 1;    
-            uint256 order = instances + 1; 
-            uint256 mintTime = Time();
-            tokenId_to_metadata[newTokenId] = Metadata(num_to_universal[targetNum], mintTime, order);
-            
-            // if the token used to make the successor is not a universal, we will burn it. 
-            
-            if (universal_to_tokenId[num1] != oldTokenId1 ) {
-                _burn(oldTokenId1);
-            }
-
-            if (universal_to_tokenId[num2] != oldTokenId2 ) {
-                _burn(oldTokenId2);
-            }
-            
-        }
-        _tokenIdCounter.increment();
         
-        _safeMint(maker, newTokenId);
         return newTokenId;
     }
         
@@ -722,41 +632,17 @@ contract VNO is ERC721, Ownable {
         require(((universalExists(num1) == true) && (universalExists(num2) == true)), "the universals of the constituents don't exist has not been made yet");
         require(((ownerOf(oldTokenId1) == maker) && (ownerOf(oldTokenId2) == maker)), "you don't own the tokens you're adding");
         
-        uint256 newTokenId = _tokenIdCounter.current();
+        // uint256 newTokenId = _tokenIdCounter.current();
         
         string memory targetNumNestedString = subtractNestedSets(tokenId_to_metadata[oldTokenId1].universal.nestedString, tokenId_to_metadata[oldTokenId2].universal.nestedString);
+        uint256 newTokenId = mintNumber(maker, targetNum, targetNumNestedString);
 
-        if (!universalExists(targetNum)) {
-            Universal storage x = num_to_universal[targetNum];
-            x.nestedString = targetNumNestedString;
-            x.number = targetNum;
-            x.instances = 1;
-            uint256 order = 1;
-            uint256 mintTime = Time();
-            tokenId_to_metadata[newTokenId] = Metadata(x, mintTime, order);
-            universal_to_tokenId[targetNum] = newTokenId; 
-        } else {
-            uint256 instances = getInstances(targetNum);    
-            num_to_universal[targetNum].instances = instances + 1;    
-            uint256 order = instances + 1; 
-            uint256 mintTime = Time();
-            tokenId_to_metadata[newTokenId] = Metadata(num_to_universal[targetNum], mintTime, order);
-            
-            // if the token used to make the successor is not a universal, we will burn it. 
-            
-            if (universal_to_tokenId[num1] != oldTokenId1 ) {
-                _burn(oldTokenId1);
-            }
-
-            if (universal_to_tokenId[num2] != oldTokenId2 ) {
-                _burn(oldTokenId2);
-            }
-            
-        }
-        _tokenIdCounter.increment();
         
-        _safeMint(maker, newTokenId);
         return newTokenId;
     }
+    
+
+
+
 
 }
