@@ -1,0 +1,604 @@
+
+
+<svg  xmlns="http://www.w3.org/2000/svg" width="10000" height="10000">
+    
+    <g>
+        <circle cx="5000" cy="5000" r="100" fill="red"/>
+    </g>
+    <g transform="translate(5000)">
+        <rect width="100" height="10000" fill="blue" fill-opacity="0.5"></rect>
+    </g>
+    
+    <!-- <g transform="translate(5000,5000) scale(10) scale(0.1)"> -->
+        <!-- <rect height="1000" width="1000" fill="blue"> -->
+        <!-- </rect> -->
+    <!-- </g> -->
+    
+    
+    
+    
+        <g transform="translate(3500) scale(0.3)">
+            <g transform="translate(3000) scale(0.4)">
+                <g transform='translate(3000) scale(0.4)'>
+                    <rect width="10000" height="10000" fill="blue" fill-opacity="0.5">
+                    </rect>
+                    <g>
+                        
+                        <circle cx="5000" cy="2500" r="1000" fill="yellow" fill-opacity="0.5"/>
+                    </g>
+                    <g transform="rotate(72,5000,5000)">
+                        <circle cx="5000" cy="2500" r="1000"/>
+                    </g>
+                    <g transform="rotate(144,5000,5000)">
+                        <circle cx="5000" cy="2500" r="1000"/>
+                    </g>
+                    <g transform="rotate(216,5000,5000)">
+                        <circle cx="5000" cy="2500" r="1000"/>
+                    </g>
+                    <g transform="rotate(288,5000,5000)">
+                        <circle cx="5000" cy="2500" r="1000"/>
+                    </g>
+                </g>    
+                <g transform='rotate(72, 5000,5000)'>
+                    <g transform='translate(3000) scale(0.4)'>
+                        <!-- <rect width="10000" height="10000" fill="blue" fill-opacity="0.5"> -->
+                        <!-- </rect> -->
+                        <g>
+                            
+                            <circle cx="5000" cy="2500" r="1000" fill="yellow" fill-opacity="0.5"/>
+                        </g>
+                        <g transform="rotate(72,5000,5000)">
+                            <circle cx="5000" cy="2500" r="1000"/>
+                        </g>
+                        <g transform="rotate(144,5000,5000)">
+                            <circle cx="5000" cy="2500" r="1000"/>
+                        </g>
+                        <g transform="rotate(216,5000,5000)">
+                            <circle cx="5000" cy="2500" r="1000"/>
+                        </g>
+                        <g transform="rotate(288,5000,5000)">
+                            <circle cx="5000" cy="2500" r="1000"/>
+                        </g>
+                    </g> 
+                </g>
+                <g transform='rotate(144, 5000,5000)'>
+                    <g transform='translate(3000) scale(0.4)'>
+                        <!-- <rect width="10000" height="10000" fill="blue" fill-opacity="0.5"> -->
+                        <!-- </rect> -->
+                        <g>
+                            
+                            <circle cx="5000" cy="2500" r="1000" fill="yellow" fill-opacity="0.5"/>
+                        </g>
+                        <g transform="rotate(72,5000,5000)">
+                            <circle cx="5000" cy="2500" r="1000"/>
+                        </g>
+                        <g transform="rotate(144,5000,5000)">
+                            <circle cx="5000" cy="2500" r="1000"/>
+                        </g>
+                        <g transform="rotate(216,5000,5000)">
+                            <circle cx="5000" cy="2500" r="1000"/>
+                        </g>
+                        <g transform="rotate(288,5000,5000)">
+                            <circle cx="5000" cy="2500" r="1000"/>
+                        </g>
+                    </g> 
+                </g>
+                <g transform='rotate(216, 5000,5000)'>
+                    <g transform='translate(3000) scale(0.4)'>
+                        <!-- <rect width="10000" height="10000" fill="blue" fill-opacity="0.5"> -->
+                        <!-- </rect> -->
+                        <g>
+                            
+                            <circle cx="5000" cy="2500" r="1000" fill="yellow" fill-opacity="0.5"/>
+                        </g>
+                        <g transform="rotate(72,5000,5000)">
+                            <circle cx="5000" cy="2500" r="1000"/>
+                        </g>
+                        <g transform="rotate(144,5000,5000)">
+                            <circle cx="5000" cy="2500" r="1000"/>
+                        </g>
+                        <g transform="rotate(216,5000,5000)">
+                            <circle cx="5000" cy="2500" r="1000"/>
+                        </g>
+                        <g transform="rotate(288,5000,5000)">
+                            <circle cx="5000" cy="2500" r="1000"/>
+                        </g>
+                    </g> 
+                </g>
+                <g transform='rotate(-72, 5000,5000)'>
+                    <g transform='translate(3000) scale(0.4)'>
+                        <!-- <rect width="10000" height="10000" fill="blue" fill-opacity="0.5"> -->
+                        <!-- </rect> -->
+                        <g>
+                            
+                            <circle cx="5000" cy="2500" r="1000" fill="yellow" fill-opacity="0.5"/>
+                        </g>
+                        <g transform="rotate(72,5000,5000)">
+                            <circle cx="5000" cy="2500" r="1000"/>
+                        </g>
+                        <g transform="rotate(144,5000,5000)">
+                            <circle cx="5000" cy="2500" r="1000"/>
+                        </g>
+                        <g transform="rotate(216,5000,5000)">
+                            <circle cx="5000" cy="2500" r="1000"/>
+                        </g>
+                        <g transform="rotate(288,5000,5000)">
+                            <circle cx="5000" cy="2500" r="1000"/>
+                        </g>
+                    </g> 
+                </g>
+                
+            </g>
+
+            <g transform="rotate(72, 5000,5000)">
+                <g transform="translate(3000) scale(0.4)">
+                    <g transform='translate(3000) scale(0.4)'>
+                        <rect width="10000" height="10000" fill="blue" fill-opacity="0.5">
+                        </rect>
+                        <g>
+                            
+                            <circle cx="5000" cy="2500" r="1000" fill="yellow" fill-opacity="0.5"/>
+                        </g>
+                        <g transform="rotate(72,5000,5000)">
+                            <circle cx="5000" cy="2500" r="1000"/>
+                        </g>
+                        <g transform="rotate(144,5000,5000)">
+                            <circle cx="5000" cy="2500" r="1000"/>
+                        </g>
+                        <g transform="rotate(216,5000,5000)">
+                            <circle cx="5000" cy="2500" r="1000"/>
+                        </g>
+                        <g transform="rotate(288,5000,5000)">
+                            <circle cx="5000" cy="2500" r="1000"/>
+                        </g>
+                    </g>    
+                    <g transform='rotate(72, 5000,5000)'>
+                        <g transform='translate(3000) scale(0.4)'>
+                            <!-- <rect width="10000" height="10000" fill="blue" fill-opacity="0.5"> -->
+                            <!-- </rect> -->
+                            <g>
+                                
+                                <circle cx="5000" cy="2500" r="1000" fill="yellow" fill-opacity="0.5"/>
+                            </g>
+                            <g transform="rotate(72,5000,5000)">
+                                <circle cx="5000" cy="2500" r="1000"/>
+                            </g>
+                            <g transform="rotate(144,5000,5000)">
+                                <circle cx="5000" cy="2500" r="1000"/>
+                            </g>
+                            <g transform="rotate(216,5000,5000)">
+                                <circle cx="5000" cy="2500" r="1000"/>
+                            </g>
+                            <g transform="rotate(288,5000,5000)">
+                                <circle cx="5000" cy="2500" r="1000"/>
+                            </g>
+                        </g> 
+                    </g>
+                    <g transform='rotate(144, 5000,5000)'>
+                        <g transform='translate(3000) scale(0.4)'>
+                            <!-- <rect width="10000" height="10000" fill="blue" fill-opacity="0.5"> -->
+                            <!-- </rect> -->
+                            <g>
+                                
+                                <circle cx="5000" cy="2500" r="1000" fill="yellow" fill-opacity="0.5"/>
+                            </g>
+                            <g transform="rotate(72,5000,5000)">
+                                <circle cx="5000" cy="2500" r="1000"/>
+                            </g>
+                            <g transform="rotate(144,5000,5000)">
+                                <circle cx="5000" cy="2500" r="1000"/>
+                            </g>
+                            <g transform="rotate(216,5000,5000)">
+                                <circle cx="5000" cy="2500" r="1000"/>
+                            </g>
+                            <g transform="rotate(288,5000,5000)">
+                                <circle cx="5000" cy="2500" r="1000"/>
+                            </g>
+                        </g> 
+                    </g>
+                    <g transform='rotate(216, 5000,5000)'>
+                        <g transform='translate(3000) scale(0.4)'>
+                            <!-- <rect width="10000" height="10000" fill="blue" fill-opacity="0.5"> -->
+                            <!-- </rect> -->
+                            <g>
+                                
+                                <circle cx="5000" cy="2500" r="1000" fill="yellow" fill-opacity="0.5"/>
+                            </g>
+                            <g transform="rotate(72,5000,5000)">
+                                <circle cx="5000" cy="2500" r="1000"/>
+                            </g>
+                            <g transform="rotate(144,5000,5000)">
+                                <circle cx="5000" cy="2500" r="1000"/>
+                            </g>
+                            <g transform="rotate(216,5000,5000)">
+                                <circle cx="5000" cy="2500" r="1000"/>
+                            </g>
+                            <g transform="rotate(288,5000,5000)">
+                                <circle cx="5000" cy="2500" r="1000"/>
+                            </g>
+                        </g> 
+                    </g>
+                    <g transform='rotate(-72, 5000,5000)'>
+                        <g transform='translate(3000) scale(0.4)'>
+                            <!-- <rect width="10000" height="10000" fill="blue" fill-opacity="0.5"> -->
+                            <!-- </rect> -->
+                            <g>
+                                
+                                <circle cx="5000" cy="2500" r="1000" fill="yellow" fill-opacity="0.5"/>
+                            </g>
+                            <g transform="rotate(72,5000,5000)">
+                                <circle cx="5000" cy="2500" r="1000"/>
+                            </g>
+                            <g transform="rotate(144,5000,5000)">
+                                <circle cx="5000" cy="2500" r="1000"/>
+                            </g>
+                            <g transform="rotate(216,5000,5000)">
+                                <circle cx="5000" cy="2500" r="1000"/>
+                            </g>
+                            <g transform="rotate(288,5000,5000)">
+                                <circle cx="5000" cy="2500" r="1000"/>
+                            </g>
+                        </g> 
+                    </g>
+                </g>
+            </g>
+
+            <g transform="rotate(144, 5000,5000)">
+                <g transform="translate(3000) scale(0.4)">
+                    <g transform='translate(3000) scale(0.4)'>
+                        <rect width="10000" height="10000" fill="blue" fill-opacity="0.5">
+                        </rect>
+                        <g>
+                            
+                            <circle cx="5000" cy="2500" r="1000" fill="yellow" fill-opacity="0.5"/>
+                        </g>
+                        <g transform="rotate(72,5000,5000)">
+                            <circle cx="5000" cy="2500" r="1000"/>
+                        </g>
+                        <g transform="rotate(144,5000,5000)">
+                            <circle cx="5000" cy="2500" r="1000"/>
+                        </g>
+                        <g transform="rotate(216,5000,5000)">
+                            <circle cx="5000" cy="2500" r="1000"/>
+                        </g>
+                        <g transform="rotate(288,5000,5000)">
+                            <circle cx="5000" cy="2500" r="1000"/>
+                        </g>
+                    </g>    
+                    <g transform='rotate(72, 5000,5000)'>
+                        <g transform='translate(3000) scale(0.4)'>
+                            <!-- <rect width="10000" height="10000" fill="blue" fill-opacity="0.5"> -->
+                            <!-- </rect> -->
+                            <g>
+                                
+                                <circle cx="5000" cy="2500" r="1000" fill="yellow" fill-opacity="0.5"/>
+                            </g>
+                            <g transform="rotate(72,5000,5000)">
+                                <circle cx="5000" cy="2500" r="1000"/>
+                            </g>
+                            <g transform="rotate(144,5000,5000)">
+                                <circle cx="5000" cy="2500" r="1000"/>
+                            </g>
+                            <g transform="rotate(216,5000,5000)">
+                                <circle cx="5000" cy="2500" r="1000"/>
+                            </g>
+                            <g transform="rotate(288,5000,5000)">
+                                <circle cx="5000" cy="2500" r="1000"/>
+                            </g>
+                        </g> 
+                    </g>
+                    <g transform='rotate(144, 5000,5000)'>
+                        <g transform='translate(3000) scale(0.4)'>
+                            <!-- <rect width="10000" height="10000" fill="blue" fill-opacity="0.5"> -->
+                            <!-- </rect> -->
+                            <g>
+                                
+                                <circle cx="5000" cy="2500" r="1000" fill="yellow" fill-opacity="0.5"/>
+                            </g>
+                            <g transform="rotate(72,5000,5000)">
+                                <circle cx="5000" cy="2500" r="1000"/>
+                            </g>
+                            <g transform="rotate(144,5000,5000)">
+                                <circle cx="5000" cy="2500" r="1000"/>
+                            </g>
+                            <g transform="rotate(216,5000,5000)">
+                                <circle cx="5000" cy="2500" r="1000"/>
+                            </g>
+                            <g transform="rotate(288,5000,5000)">
+                                <circle cx="5000" cy="2500" r="1000"/>
+                            </g>
+                        </g> 
+                    </g>
+                    <g transform='rotate(216, 5000,5000)'>
+                        <g transform='translate(3000) scale(0.4)'>
+                            <!-- <rect width="10000" height="10000" fill="blue" fill-opacity="0.5"> -->
+                            <!-- </rect> -->
+                            <g>
+                                
+                                <circle cx="5000" cy="2500" r="1000" fill="yellow" fill-opacity="0.5"/>
+                            </g>
+                            <g transform="rotate(72,5000,5000)">
+                                <circle cx="5000" cy="2500" r="1000"/>
+                            </g>
+                            <g transform="rotate(144,5000,5000)">
+                                <circle cx="5000" cy="2500" r="1000"/>
+                            </g>
+                            <g transform="rotate(216,5000,5000)">
+                                <circle cx="5000" cy="2500" r="1000"/>
+                            </g>
+                            <g transform="rotate(288,5000,5000)">
+                                <circle cx="5000" cy="2500" r="1000"/>
+                            </g>
+                        </g> 
+                    </g>
+                    <g transform='rotate(-72, 5000,5000)'>
+                        <g transform='translate(3000) scale(0.4)'>
+                            <!-- <rect width="10000" height="10000" fill="blue" fill-opacity="0.5"> -->
+                            <!-- </rect> -->
+                            <g>
+                                
+                                <circle cx="5000" cy="2500" r="1000" fill="yellow" fill-opacity="0.5"/>
+                            </g>
+                            <g transform="rotate(72,5000,5000)">
+                                <circle cx="5000" cy="2500" r="1000"/>
+                            </g>
+                            <g transform="rotate(144,5000,5000)">
+                                <circle cx="5000" cy="2500" r="1000"/>
+                            </g>
+                            <g transform="rotate(216,5000,5000)">
+                                <circle cx="5000" cy="2500" r="1000"/>
+                            </g>
+                            <g transform="rotate(288,5000,5000)">
+                                <circle cx="5000" cy="2500" r="1000"/>
+                            </g>
+                        </g> 
+                    </g>
+                </g>
+            </g>
+
+            <g transform="rotate(-72, 5000,5000)">
+                <g transform="translate(3000) scale(0.4)">
+                    <g transform='translate(3000) scale(0.4)'>
+                        <rect width="10000" height="10000" fill="blue" fill-opacity="0.5">
+                        </rect>
+                        <g>
+                            
+                            <circle cx="5000" cy="2500" r="1000" fill="yellow" fill-opacity="0.5"/>
+                        </g>
+                        <g transform="rotate(72,5000,5000)">
+                            <circle cx="5000" cy="2500" r="1000"/>
+                        </g>
+                        <g transform="rotate(144,5000,5000)">
+                            <circle cx="5000" cy="2500" r="1000"/>
+                        </g>
+                        <g transform="rotate(216,5000,5000)">
+                            <circle cx="5000" cy="2500" r="1000"/>
+                        </g>
+                        <g transform="rotate(288,5000,5000)">
+                            <circle cx="5000" cy="2500" r="1000"/>
+                        </g>
+                    </g>    
+                    <g transform='rotate(72, 5000,5000)'>
+                        <g transform='translate(3000) scale(0.4)'>
+                            <!-- <rect width="10000" height="10000" fill="blue" fill-opacity="0.5"> -->
+                            <!-- </rect> -->
+                            <g>
+                                
+                                <circle cx="5000" cy="2500" r="1000" fill="yellow" fill-opacity="0.5"/>
+                            </g>
+                            <g transform="rotate(72,5000,5000)">
+                                <circle cx="5000" cy="2500" r="1000"/>
+                            </g>
+                            <g transform="rotate(144,5000,5000)">
+                                <circle cx="5000" cy="2500" r="1000"/>
+                            </g>
+                            <g transform="rotate(216,5000,5000)">
+                                <circle cx="5000" cy="2500" r="1000"/>
+                            </g>
+                            <g transform="rotate(288,5000,5000)">
+                                <circle cx="5000" cy="2500" r="1000"/>
+                            </g>
+                        </g> 
+                    </g>
+                    <g transform='rotate(144, 5000,5000)'>
+                        <g transform='translate(3000) scale(0.4)'>
+                            <!-- <rect width="10000" height="10000" fill="blue" fill-opacity="0.5"> -->
+                            <!-- </rect> -->
+                            <g>
+                                
+                                <circle cx="5000" cy="2500" r="1000" fill="yellow" fill-opacity="0.5"/>
+                            </g>
+                            <g transform="rotate(72,5000,5000)">
+                                <circle cx="5000" cy="2500" r="1000"/>
+                            </g>
+                            <g transform="rotate(144,5000,5000)">
+                                <circle cx="5000" cy="2500" r="1000"/>
+                            </g>
+                            <g transform="rotate(216,5000,5000)">
+                                <circle cx="5000" cy="2500" r="1000"/>
+                            </g>
+                            <g transform="rotate(288,5000,5000)">
+                                <circle cx="5000" cy="2500" r="1000"/>
+                            </g>
+                        </g> 
+                    </g>
+                    <g transform='rotate(216, 5000,5000)'>
+                        <g transform='translate(3000) scale(0.4)'>
+                            <!-- <rect width="10000" height="10000" fill="blue" fill-opacity="0.5"> -->
+                            <!-- </rect> -->
+                            <g>
+                                
+                                <circle cx="5000" cy="2500" r="1000" fill="yellow" fill-opacity="0.5"/>
+                            </g>
+                            <g transform="rotate(72,5000,5000)">
+                                <circle cx="5000" cy="2500" r="1000"/>
+                            </g>
+                            <g transform="rotate(144,5000,5000)">
+                                <circle cx="5000" cy="2500" r="1000"/>
+                            </g>
+                            <g transform="rotate(216,5000,5000)">
+                                <circle cx="5000" cy="2500" r="1000"/>
+                            </g>
+                            <g transform="rotate(288,5000,5000)">
+                                <circle cx="5000" cy="2500" r="1000"/>
+                            </g>
+                        </g> 
+                    </g>
+                    <g transform='rotate(-72, 5000,5000)'>
+                        <g transform='translate(3000) scale(0.4)'>
+                            <!-- <rect width="10000" height="10000" fill="blue" fill-opacity="0.5"> -->
+                            <!-- </rect> -->
+                            <g>
+                                
+                                <circle cx="5000" cy="2500" r="1000" fill="yellow" fill-opacity="0.5"/>
+                            </g>
+                            <g transform="rotate(72,5000,5000)">
+                                <circle cx="5000" cy="2500" r="1000"/>
+                            </g>
+                            <g transform="rotate(144,5000,5000)">
+                                <circle cx="5000" cy="2500" r="1000"/>
+                            </g>
+                            <g transform="rotate(216,5000,5000)">
+                                <circle cx="5000" cy="2500" r="1000"/>
+                            </g>
+                            <g transform="rotate(288,5000,5000)">
+                                <circle cx="5000" cy="2500" r="1000"/>
+                            </g>
+                        </g> 
+                    </g>
+                </g>
+            </g>
+
+            <g transform="rotate(-144, 5000,5000)">
+                <g transform="translate(3000) scale(0.4)">
+                    <g transform='translate(3000) scale(0.4)'>
+                        <rect width="10000" height="10000" fill="blue" fill-opacity="0.5">
+                        </rect>
+                        <g>
+                            
+                            <circle cx="5000" cy="2500" r="1000" fill="yellow" fill-opacity="0.5"/>
+                        </g>
+                        <g transform="rotate(72,5000,5000)">
+                            <circle cx="5000" cy="2500" r="1000"/>
+                        </g>
+                        <g transform="rotate(144,5000,5000)">
+                            <circle cx="5000" cy="2500" r="1000"/>
+                        </g>
+                        <g transform="rotate(216,5000,5000)">
+                            <circle cx="5000" cy="2500" r="1000"/>
+                        </g>
+                        <g transform="rotate(288,5000,5000)">
+                            <circle cx="5000" cy="2500" r="1000"/>
+                        </g>
+                    </g>    
+                    <g transform='rotate(72, 5000,5000)'>
+                        <g transform='translate(3000) scale(0.4)'>
+                            <!-- <rect width="10000" height="10000" fill="blue" fill-opacity="0.5"> -->
+                            <!-- </rect> -->
+                            <g>
+                                
+                                <circle cx="5000" cy="2500" r="1000" fill="yellow" fill-opacity="0.5"/>
+                            </g>
+                            <g transform="rotate(72,5000,5000)">
+                                <circle cx="5000" cy="2500" r="1000"/>
+                            </g>
+                            <g transform="rotate(144,5000,5000)">
+                                <circle cx="5000" cy="2500" r="1000"/>
+                            </g>
+                            <g transform="rotate(216,5000,5000)">
+                                <circle cx="5000" cy="2500" r="1000"/>
+                            </g>
+                            <g transform="rotate(288,5000,5000)">
+                                <circle cx="5000" cy="2500" r="1000"/>
+                            </g>
+                        </g> 
+                    </g>
+                    <g transform='rotate(144, 5000,5000)'>
+                        <g transform='translate(3000) scale(0.4)'>
+                            <!-- <rect width="10000" height="10000" fill="blue" fill-opacity="0.5"> -->
+                            <!-- </rect> -->
+                            <g>
+                                
+                                <circle cx="5000" cy="2500" r="1000" fill="yellow" fill-opacity="0.5"/>
+                            </g>
+                            <g transform="rotate(72,5000,5000)">
+                                <circle cx="5000" cy="2500" r="1000"/>
+                            </g>
+                            <g transform="rotate(144,5000,5000)">
+                                <circle cx="5000" cy="2500" r="1000"/>
+                            </g>
+                            <g transform="rotate(216,5000,5000)">
+                                <circle cx="5000" cy="2500" r="1000"/>
+                            </g>
+                            <g transform="rotate(288,5000,5000)">
+                                <circle cx="5000" cy="2500" r="1000"/>
+                            </g>
+                        </g> 
+                    </g>
+                    <g transform='rotate(216, 5000,5000)'>
+                        <g transform='translate(3000) scale(0.4)'>
+                            <!-- <rect width="10000" height="10000" fill="blue" fill-opacity="0.5"> -->
+                            <!-- </rect> -->
+                            <g>
+                                
+                                <circle cx="5000" cy="2500" r="1000" fill="yellow" fill-opacity="0.5"/>
+                            </g>
+                            <g transform="rotate(72,5000,5000)">
+                                <circle cx="5000" cy="2500" r="1000"/>
+                            </g>
+                            <g transform="rotate(144,5000,5000)">
+                                <circle cx="5000" cy="2500" r="1000"/>
+                            </g>
+                            <g transform="rotate(216,5000,5000)">
+                                <circle cx="5000" cy="2500" r="1000"/>
+                            </g>
+                            <g transform="rotate(288,5000,5000)">
+                                <circle cx="5000" cy="2500" r="1000"/>
+                            </g>
+                        </g> 
+                    </g>
+                    <g transform='rotate(-72, 5000,5000)'>
+                        <g transform='translate(3000) scale(0.4)'>
+                            <!-- <rect width="10000" height="10000" fill="blue" fill-opacity="0.5"> -->
+                            <!-- </rect> -->
+                            <g>
+                                
+                                <circle cx="5000" cy="2500" r="1000" fill="yellow" fill-opacity="0.5"/>
+                            </g>
+                            <g transform="rotate(72,5000,5000)">
+                                <circle cx="5000" cy="2500" r="1000"/>
+                            </g>
+                            <g transform="rotate(144,5000,5000)">
+                                <circle cx="5000" cy="2500" r="1000"/>
+                            </g>
+                            <g transform="rotate(216,5000,5000)">
+                                <circle cx="5000" cy="2500" r="1000"/>
+                            </g>
+                            <g transform="rotate(288,5000,5000)">
+                                <circle cx="5000" cy="2500" r="1000"/>
+                            </g>
+                        </g> 
+                    </g>
+                </g>
+            </g>
+        </g>
+
+
+        <g transform="rotate(72, 5000,5000)">
+            
+        </g>
+    
+    
+        
+        
+        
+
+
+
+    <g>
+        <circle cx="5000" cy="5000" r="3750" fill="red" fill-opacity="0.4"/>
+    </g>
+   
+        
+    
+</svg>

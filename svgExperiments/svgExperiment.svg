@@ -1,0 +1,204 @@
+<!-- <svg xmlns="http://www.w3.org/2000/svg" width="1000" height="1000">
+    <circle cx="500" cy="500" r="100"/>
+</svg> -->
+
+
+
+<!-- <svg xmlns="http://www.w3.org/2000/svg" width="2000" height="2000">
+    <circle cx="1000" cy="500" r="100"/>
+    <circle cx="1000" cy="1500" r="100"/>
+</svg> -->
+
+
+<!-- <svg xmlns="http://www.w3.org/2000/svg" width="1000" height="1000">
+    <circle cx="500" cy="250" r="50"/>
+    <circle cx="716"    cy="625" r="50"/>
+    <circle cx="283.4"  cy="625" r="50"/>
+</svg> -->
+
+
+<!-- <svg xmlns="http://www.w3.org/2000/svg" width="2000" height="2000">
+    <g xmlns="http://www.w3.org/2000/svg" transform="matrix(23050 1 -12.5067 69.4101)" id="ufo">
+    
+        <circle cx="500" cy="250" r="50"/>
+        <circle cx="716"    cy="625" r="50"/>
+        <circle cx="283.4"  cy="625" r="50"/>
+    </g>
+</svg> -->
+
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="1000">
+    <!-- <g xmlns="http://www.w3.org/2000/svg">
+        <g xmlns="http://www.w3.org/2000/svg">
+            <circle cx="500" cy="250" r="50"/>
+        </g>
+        <g xmlns="http://www.w3.org/2000/svg" transform="rotate(120, 500, 500)" id="ufo">
+            <circle cx="500" cy="250" r="50"/>
+            
+        </g>
+        <g xmlns="http://www.w3.org/2000/svg" transform="rotate(240, 500, 500)" id="ufo">
+            <circle cx="500" cy="250" r="50"/>
+            
+        </g>
+    </g> -->
+    
+
+    <!-- Three triangles rotated -->
+    <!-- <g xmlns="http://www.w3.org/2000/svg" transform="scale(0.3) translate(1125)">
+        
+        <g xmlns="http://www.w3.org/2000/svg" transform="rotate(300, 500,500)">
+            <circle cx="500" cy="250" r="50"/>
+        </g>
+        <g xmlns="http://www.w3.org/2000/svg" transform="rotate(60, 500, 500)" id="ufo">
+            <circle cx="500" cy="250" r="50"/>
+            
+        </g>
+        <g xmlns="http://www.w3.org/2000/svg" transform="rotate(180, 500, 500)" id="ufo">
+            <circle cx="500" cy="250" r="50"/>
+            
+        </g>
+    </g>
+    <g xmlns="http://www.w3.org/2000/svg" transform="rotate(120, 500, 500)" id="ufo">
+        <g xmlns="http://www.w3.org/2000/svg" transform="scale(0.3) translate(1125)">
+            <g xmlns="http://www.w3.org/2000/svg" transform="rotate(300, 500,500)">
+                <circle cx="500" cy="250" r="50"/>
+            </g>
+            <g xmlns="http://www.w3.org/2000/svg" transform="rotate(60, 500, 500)" id="ufo">
+                <circle cx="500" cy="250" r="50"/>
+
+            </g>
+            <g xmlns="http://www.w3.org/2000/svg" transform="rotate(180, 500, 500)" id="ufo">
+                <circle cx="500" cy="250" r="50"/>
+
+            </g>
+        </g>
+    </g> -->
+
+    
+        <g xmlns="http://www.w3.org/2000/svg" transform="scale(0.5) translate(500)">
+            <g xmlns="http://www.w3.org/2000/svg" transform="scale(0.5) translate(500)">
+                <g xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="500" cy="250" r="50"/>
+                </g>
+                <g xmlns="http://www.w3.org/2000/svg" transform="rotate(120, 500, 500)">
+                    <circle cx="500" cy="250" r="50"/>
+                </g>
+                <g xmlns="http://www.w3.org/2000/svg" transform="rotate(240, 500, 500)">
+                    <circle cx="500" cy="250" r="50"/>
+                </g>
+            </g>
+            <g xmlns="http://www.w3.org/2000/svg" transform="rotate(120,500,500)">
+                <g xmlns="http://www.w3.org/2000/svg" transform="scale(0.5) translate(500)">
+                    <g xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="500" cy="250" r="50"/>
+                    </g>
+                    <g xmlns="http://www.w3.org/2000/svg" transform="rotate(120, 500, 500)">
+                        <circle cx="500" cy="250" r="50"/>
+                    </g>
+                    <g xmlns="http://www.w3.org/2000/svg" transform="rotate(240, 500, 500)">
+                        <circle cx="500" cy="250" r="50"/>
+                    </g>
+                </g>
+            </g>
+            <g xmlns="http://www.w3.org/2000/svg" transform="rotate(240,500,500)">
+                <g xmlns="http://www.w3.org/2000/svg" transform="scale(0.5) translate(500)">
+                    <g xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="500" cy="250" r="50"/>
+                    </g>
+                    <g xmlns="http://www.w3.org/2000/svg" transform="rotate(120, 500, 500)">
+                        <circle cx="500" cy="250" r="50"/>
+                    </g>
+                    <g xmlns="http://www.w3.org/2000/svg" transform="rotate(240, 500, 500)">
+                        <circle cx="500" cy="250" r="50"/>
+                    </g>
+                </g>
+            </g>
+        </g>        
+        <g xmlns="http://www.w3.org/2000/svg" transform="rotate(120,500,500)">
+            <g xmlns="http://www.w3.org/2000/svg" transform="scale(0.5) translate(500)">
+                <g xmlns="http://www.w3.org/2000/svg" transform="scale(0.5) translate(500)">
+                    <g xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="500" cy="250" r="50"/>
+                    </g>
+                    <g xmlns="http://www.w3.org/2000/svg" transform="rotate(120, 500, 500)">
+                        <circle cx="500" cy="250" r="50"/>
+                    </g>
+                    <g xmlns="http://www.w3.org/2000/svg" transform="rotate(240, 500, 500)">
+                        <circle cx="500" cy="250" r="50"/>
+                    </g>
+                </g>
+                <g xmlns="http://www.w3.org/2000/svg" transform="rotate(120,500,500)">
+                    <g xmlns="http://www.w3.org/2000/svg" transform="scale(0.5) translate(500)">
+                        <g xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="500" cy="250" r="50"/>
+                        </g>
+                        <g xmlns="http://www.w3.org/2000/svg" transform="rotate(120, 500, 500)">
+                            <circle cx="500" cy="250" r="50"/>
+                        </g>
+                        <g xmlns="http://www.w3.org/2000/svg" transform="rotate(240, 500, 500)">
+                            <circle cx="500" cy="250" r="50"/>
+                        </g>
+                    </g>
+                </g>
+                <g xmlns="http://www.w3.org/2000/svg" transform="rotate(240,500,500)">
+                    <g xmlns="http://www.w3.org/2000/svg" transform="scale(0.5) translate(500)">
+                        <g xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="500" cy="250" r="50"/>
+                        </g>
+                        <g xmlns="http://www.w3.org/2000/svg" transform="rotate(120, 500, 500)">
+                            <circle cx="500" cy="250" r="50"/>
+                        </g>
+                        <g xmlns="http://www.w3.org/2000/svg" transform="rotate(240, 500, 500)">
+                            <circle cx="500" cy="250" r="50"/>
+                        </g>
+                    </g>
+                </g>
+            </g>
+        </g>
+        <g xmlns="http://www.w3.org/2000/svg" transform="rotate(240,500,500)">
+            <g xmlns="http://www.w3.org/2000/svg" transform="scale(0.5) translate(500)">
+                <g xmlns="http://www.w3.org/2000/svg" transform="scale(0.5) translate(500)">
+                    <g xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="500" cy="250" r="50"/>
+                    </g>
+                    <g xmlns="http://www.w3.org/2000/svg" transform="rotate(120, 500, 500)">
+                        <circle cx="500" cy="250" r="50"/>
+                    </g>
+                    <g xmlns="http://www.w3.org/2000/svg" transform="rotate(240, 500, 500)">
+                        <circle cx="500" cy="250" r="50"/>
+                    </g>
+                </g>
+                <g xmlns="http://www.w3.org/2000/svg" transform="rotate(120,500,500)">
+                    <g xmlns="http://www.w3.org/2000/svg" transform="scale(0.5) translate(500)">
+                        <g xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="500" cy="250" r="50"/>
+                        </g>
+                        <g xmlns="http://www.w3.org/2000/svg" transform="rotate(120, 500, 500)">
+                            <circle cx="500" cy="250" r="50"/>
+                        </g>
+                        <g xmlns="http://www.w3.org/2000/svg" transform="rotate(240, 500, 500)">
+                            <circle cx="500" cy="250" r="50"/>
+                        </g>
+                    </g>
+                </g>
+                <g xmlns="http://www.w3.org/2000/svg" transform="rotate(240,500,500)">
+                    <g xmlns="http://www.w3.org/2000/svg" transform="scale(0.5) translate(500)">
+                        <g xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="500" cy="250" r="50"/>
+                        </g>
+                        <g xmlns="http://www.w3.org/2000/svg" transform="rotate(120, 500, 500)">
+                            <circle cx="500" cy="250" r="50"/>
+                        </g>
+                        <g xmlns="http://www.w3.org/2000/svg" transform="rotate(240, 500, 500)">
+                            <circle cx="500" cy="250" r="50"/>
+                        </g>
+                    </g>
+                </g>
+            </g>
+        </g>
+        
+    <!-- 
+        
+     -->
+
+
+</svg>
